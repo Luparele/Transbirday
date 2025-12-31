@@ -1,0 +1,104 @@
+{% extends 'APP/base.html' %}
+
+{% block title %}Gerenciamento de Usuários{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-people-fill"></i> Gerenciamento de Usuários</h2>
+        <a href="{% url 'manage_user_new' %}" class="btn btn-primary">
+            <i class="bi bi-person-plus-fill"></i> Novo Usuário
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Nome Completo</th>
+                            <th>E-mail</th>
+                            <th>Status</th>
+                            <th>Admin</th>
+                            <th>Permissões</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>
+                                <strong>{{ user.username }}</strong>
+                                {% if user.is_superuser %}
+                                <span class="badge bg-danger ms-2">Superuser</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.get_full_name|default:"—" }}</td>
+                            <td>{{ user.email|default:"—" }}</td>
+                            <td>
+                                {% if user.is_active %}
+                                <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Inativo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.is_staff %}
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                {% else %}
+                                <i class="bi bi-x-circle text-muted"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ user.user_permissions.count }}</span>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'manage_user_edit' user.id %}" 
+                                   class="btn btn-sm btn-outline-primary" 
+                                   title="Editar">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                {% if not user.is_superuser %}
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-danger" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#deleteModal{{ user.id }}"
+                                        title="Excluir">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        <!-- Modal de Confirmação de Exclusão -->
+                        <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Confirmar Exclusão</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Tem certeza que deseja excluir o usuário <strong>{{ user.username }}</strong>?</p>
+                                        <p class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Esta ação não pode ser desfeita!</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        <form action="{% url 'delete_user' user.id %}" method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">Excluir</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+<form id="vaForm" action="{% url 'veiculo_assegurado_update' veiculo.id %}" method="post">
+    {% csrf_token %}
+    
+    <div class="row">
+        <div class="col-md-6">
+            {{ va_form.seguradora.label_tag }}
+            {{ va_form.seguradora }}
+        </div>
+        <div class="col-md-6">
+            {{ va_form.vigencia.label_tag }}
+            {{ va_form.vigencia }}
+        </div>
+        <div class="col-md-4 mt-3">
+            {{ va_form.placa.label_tag }}
+            {{ va_form.placa }}
+        </div>
+        <div class="col-md-4 mt-3">
+            {{ va_form.marca.label_tag }}
+            {{ va_form.marca }}
+        </div>
+        <div class="col-md-4 mt-3">
+            {{ va_form.modelo.label_tag }}
+            {{ va_form.modelo }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.ano_fabricacao.label_tag }}
+            {{ va_form.ano_fabricacao }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.ano_modelo.label_tag }}
+            {{ va_form.ano_modelo }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.cobertura.label_tag }}
+            {{ va_form.cobertura }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.valor_fipe_percent.label_tag }}
+            {{ va_form.valor_fipe_percent }}
+        </div>
+        <div class="col-md-12 mt-3">
+            <hr>
+            <h6 class="text-center">Valores de Cobertura (R$)</h6>
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.franquia.label_tag }}
+            {{ va_form.franquia }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.danos_materiais.label_tag }}
+            {{ va_form.danos_materiais }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.danos_corporais.label_tag }}
+            {{ va_form.danos_corporais }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.danos_morais.label_tag }}
+            {{ va_form.danos_morais }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.app_morte.label_tag }}
+            {{ va_form.app_morte }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.app_invalidez.label_tag }}
+            {{ va_form.app_invalidez }}
+        </div>
+        <div class="col-md-12 mt-3">
+            <hr>
+            <h6 class="text-center">Assistência</h6>
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.assistencia_km.label_tag }}
+            {{ va_form.assistencia_km }}
+        </div>
+        <div class="col-md-6 mt-3">
+            {{ va_form.carro_reserva_dias.label_tag }}
+            {{ va_form.carro_reserva_dias }}
+        </div>
+        <div class="col-md-12 mt-3">
+            <div class="form-check">
+                {{ va_form.cobertura_vidros }}
+                <label for="{{ va_form.cobertura_vidros.id_for_label }}" class="form-check-label">{{ va_form.cobertura_vidros.label }}</label>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-footer mt-3">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    </div>
+</form>

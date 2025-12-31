@@ -1,0 +1,737 @@
+{% extends 'APP/base.html' %}
+
+{% block title %}{{ form_title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-shield-lock-fill"></i> {{ form_title }}</h2>
+        <a href="{% url 'manage_users_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-person-badge"></i> Informações Básicas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">{{ form.first_name.label }}</label>
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">{{ form.last_name.label }}</label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label">{{ form.password1.label }}</label>
+                            {{ form.password1 }}
+                            <small class="form-text text-muted">{{ form.password1.help_text }}</small>
+                            {% if form.password1.errors %}
+                            <div class="text-danger">{{ form.password1.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label">{{ form.password2.label }}</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                            <div class="text-danger">{{ form.password2.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                {% if not editing %}
+                <div class="alert alert-info mb-3" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <strong>Senha Padrão:</strong> Se deixar os campos de senha em branco, o sistema usará automaticamente a senha: <code>transbirday2025</code>
+                </div>
+                {% else %}
+                <div class="alert alert-warning mb-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Atenção:</strong> Deixe os campos de senha em branco para manter a senha atual do usuário.
+                </div>
+                {% endif %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            {{ form.is_staff }}
+                            <label class="form-check-label" for="{{ form.is_staff.id_for_label }}">
+                                {{ form.is_staff.label }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            {{ form.is_active }}
+                            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                {{ form.is_active.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GERENCIAMENTO DE RISCO -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #2c2e83; color: white;">
+                <h5 class="mb-0"><i class="bi bi-shield-fill"></i> GERENCIAMENTO DE RISCO</h5>
+                <button type="button" class="btn btn-sm btn-light" onclick="toggleAllGR()">
+                    <i class="bi bi-check-square"></i> Selecionar Todos
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check mb-3">
+                            {{ form.view_gr_module }}
+                            <label class="form-check-label fw-bold" for="{{ form.view_gr_module.id_for_label }}">
+                                <i class="bi bi-eye-fill"></i> {{ form.view_gr_module.label }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-3">
+                            {{ form.view_gr_attachments }}
+                            <label class="form-check-label fw-bold text-primary" for="{{ form.view_gr_attachments.id_for_label }}">
+                                <i class="bi bi-file-pdf-fill"></i> {{ form.view_gr_attachments.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40%">Módulo</th>
+                            <th class="text-center">Adicionar</th>
+                            <th class="text-center">Editar</th>
+                            <th class="text-center">Excluir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>PGRs</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_pgr }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_pgr }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_pgr }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Checklists</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_checklist }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_checklist }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_checklist }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gerenciadoras de Risco</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_gerenciadorarisco }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_gerenciadorarisco }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_gerenciadorarisco }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Veículos</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_veiculo }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_veiculo }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_veiculo }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rotogramas</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_rotograma }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_rotograma }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_rotograma }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tarefas GR</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_tarefa }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_tarefa }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_tarefa }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Black List</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_condutorblacklist }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_condutorblacklist }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_condutorblacklist }}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECURITY -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #00a9e0; color: white;">
+                <h5 class="mb-0"><i class="bi bi-incognito"></i> SECURITY</h5>
+                <button type="button" class="btn btn-sm btn-light" onclick="toggleAllSecurity()">
+                    <i class="bi bi-check-square"></i> Selecionar Todos
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check mb-3">
+                            {{ form.view_security_module }}
+                            <label class="form-check-label fw-bold" for="{{ form.view_security_module.id_for_label }}">
+                                <i class="bi bi-eye-fill"></i> {{ form.view_security_module.label }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-3">
+                            {{ form.view_security_attachments }}
+                            <label class="form-check-label fw-bold text-primary" for="{{ form.view_security_attachments.id_for_label }}">
+                                <i class="bi bi-file-pdf-fill"></i> {{ form.view_security_attachments.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40%">Módulo</th>
+                            <th class="text-center">Adicionar</th>
+                            <th class="text-center">Editar</th>
+                            <th class="text-center">Excluir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Gestão de Seguros</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_seguro }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_seguro }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_seguro }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gestão de Sinistros</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_sinistro }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_sinistro }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_sinistro }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Veículos Assegurados</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_veiculoassegurado }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_veiculoassegurado }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_veiculoassegurado }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tarefas Security</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_securitytarefa }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_securitytarefa }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_securitytarefa }}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- QSMS -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #808285; color: white;">
+                <h5 class="mb-0"><i class="bi bi-calendar-check"></i> QSMS</h5>
+                <button type="button" class="btn btn-sm btn-light" onclick="toggleAllQSMS()">
+                    <i class="bi bi-check-square"></i> Selecionar Todos
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check mb-3">
+                            {{ form.view_qsms_module }}
+                            <label class="form-check-label fw-bold" for="{{ form.view_qsms_module.id_for_label }}">
+                                <i class="bi bi-eye-fill"></i> {{ form.view_qsms_module.label }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-3">
+                            {{ form.view_qsms_attachments }}
+                            <label class="form-check-label fw-bold text-primary" for="{{ form.view_qsms_attachments.id_for_label }}">
+                                <i class="bi bi-file-pdf-fill"></i> {{ form.view_qsms_attachments.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40%">Módulo</th>
+                            <th class="text-center">Adicionar</th>
+                            <th class="text-center">Editar</th>
+                            <th class="text-center">Excluir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Gestão de Certificados</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_certificadoqsms }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_certificadoqsms }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_certificadoqsms }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Agenda (Eventos/Treinamentos)</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_agendaqsms }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_agendaqsms }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_agendaqsms }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tarefas QSMS</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_qsmstarefa }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_qsmstarefa }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_qsmstarefa }}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FÁRMACO -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #28a745; color: white;">
+                <h5 class="mb-0"><i class="bi bi-capsule"></i> FÁRMACO</h5>
+                <button type="button" class="btn btn-sm btn-light" onclick="toggleAllFarmaco()">
+                    <i class="bi bi-check-square"></i> Selecionar Todos
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check mb-3">
+                            {{ form.view_farmaco_module }}
+                            <label class="form-check-label fw-bold" for="{{ form.view_farmaco_module.id_for_label }}">
+                                <i class="bi bi-eye-fill"></i> {{ form.view_farmaco_module.label }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-3">
+                            {{ form.view_farmaco_attachments }}
+                            <label class="form-check-label fw-bold text-primary" for="{{ form.view_farmaco_attachments.id_for_label }}">
+                                <i class="bi bi-file-pdf-fill"></i> {{ form.view_farmaco_attachments.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40%">Módulo</th>
+                            <th class="text-center">Adicionar</th>
+                            <th class="text-center">Editar</th>
+                            <th class="text-center">Excluir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Gestão de Certificados</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_certificadofarmaco }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_certificadofarmaco }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_certificadofarmaco }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Agenda (Eventos/Treinamentos)</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_agendafarmaco }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_agendafarmaco }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_agendafarmaco }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tarefas Fármaco</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_farmacotarefa }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_farmacotarefa }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_farmacotarefa }}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ARQUIVOS DIVERSOS -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-folder-fill"></i> ARQUIVOS DIVERSOS</h5>
+                <button type="button" class="btn btn-sm btn-light" onclick="toggleAllArquivos()">
+                    <i class="bi bi-check-square"></i> Selecionar Todos
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="form-check mb-2">
+                    {{ form.view_arquivosdiversos_module }}
+                    <label class="form-check-label fw-bold" for="{{ form.view_arquivosdiversos_module.id_for_label }}">
+                        {{ form.view_arquivosdiversos_module.label }}
+                    </label>
+                </div>
+                <div class="form-check mb-3">
+                    {{ form.view_all_arquivodiverso }}
+                    <label class="form-check-label" for="{{ form.view_all_arquivodiverso.id_for_label }}">
+                        {{ form.view_all_arquivodiverso.label }}
+                    </label>
+                </div>
+                
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40%">Módulo</th>
+                            <th class="text-center">Adicionar</th>
+                            <th class="text-center">Editar</th>
+                            <th class="text-center">Excluir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Arquivos Diversos</strong></td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.add_arquivodiverso }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.change_arquivodiverso }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                    {{ form.delete_arquivodiverso }}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+            <a href="{% url 'manage_users_list' %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle-fill"></i> Salvar Usuário
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Funções para selecionar/desselecionar todos os checkboxes por módulo
+
+function toggleAllGR() {
+    const checkboxes = [
+        'id_view_gr_module',
+        'id_view_gr_attachments',
+        'id_add_pgr', 'id_change_pgr', 'id_delete_pgr',
+        'id_add_checklist', 'id_change_checklist', 'id_delete_checklist',
+        'id_add_gerenciadorarisco', 'id_change_gerenciadorarisco', 'id_delete_gerenciadorarisco',
+        'id_add_veiculo', 'id_change_veiculo', 'id_delete_veiculo',
+        'id_add_rotograma', 'id_change_rotograma', 'id_delete_rotograma',
+        'id_add_tarefa', 'id_change_tarefa', 'id_delete_tarefa',
+        'id_add_condutorblacklist', 'id_change_condutorblacklist', 'id_delete_condutorblacklist'
+    ];
+    toggleCheckboxes(checkboxes);
+}
+
+function toggleAllSecurity() {
+    const checkboxes = [
+        'id_view_security_module',
+        'id_view_security_attachments',
+        'id_add_seguro', 'id_change_seguro', 'id_delete_seguro',
+        'id_add_sinistro', 'id_change_sinistro', 'id_delete_sinistro',
+        'id_add_veiculoassegurado', 'id_change_veiculoassegurado', 'id_delete_veiculoassegurado',
+        'id_add_securitytarefa', 'id_change_securitytarefa', 'id_delete_securitytarefa'
+    ];
+    toggleCheckboxes(checkboxes);
+}
+
+function toggleAllQSMS() {
+    const checkboxes = [
+        'id_view_qsms_module',
+        'id_view_qsms_attachments',
+        'id_add_certificadoqsms', 'id_change_certificadoqsms', 'id_delete_certificadoqsms',
+        'id_add_agendaqsms', 'id_change_agendaqsms', 'id_delete_agendaqsms',
+        'id_add_qsmstarefa', 'id_change_qsmstarefa', 'id_delete_qsmstarefa'
+    ];
+    toggleCheckboxes(checkboxes);
+}
+
+function toggleAllFarmaco() {
+    const checkboxes = [
+        'id_view_farmaco_module',
+        'id_view_farmaco_attachments',
+        'id_add_certificadofarmaco', 'id_change_certificadofarmaco', 'id_delete_certificadofarmaco',
+        'id_add_agendafarmaco', 'id_change_agendafarmaco', 'id_delete_agendafarmaco',
+        'id_add_farmacotarefa', 'id_change_farmacotarefa', 'id_delete_farmacotarefa'
+    ];
+    toggleCheckboxes(checkboxes);
+}
+
+function toggleAllArquivos() {
+    const checkboxes = [
+        'id_view_arquivosdiversos_module',
+        'id_view_all_arquivodiverso',
+        'id_add_arquivodiverso', 'id_change_arquivodiverso', 'id_delete_arquivodiverso'
+    ];
+    toggleCheckboxes(checkboxes);
+}
+
+function toggleCheckboxes(checkboxIds) {
+    // Verifica se todos estão marcados
+    let allChecked = true;
+    checkboxIds.forEach(id => {
+        const checkbox = document.getElementById(id);
+        if (checkbox && !checkbox.checked) {
+            allChecked = false;
+        }
+    });
+    
+    // Se todos estão marcados, desmarca. Senão, marca todos.
+    const newState = !allChecked;
+    checkboxIds.forEach(id => {
+        const checkbox = document.getElementById(id);
+        if (checkbox) {
+            checkbox.checked = newState;
+        }
+    });
+}
+</script>
+{% endblock %}

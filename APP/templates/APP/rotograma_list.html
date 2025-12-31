@@ -1,0 +1,160 @@
+{% extends 'APP/base.html' %}
+
+{% block title %}Rotogramas - Gerenciamento de Risco{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>GR - Rotogramas</h2>
+        {% if perms.APP.add_rotograma %}
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rotogramaModal" id="btnNovoRotograma">
+            + Adicionar Rotograma
+        </button>
+        {% endif %}
+    </div>
+
+    <div class="list-group" id="rotogramaAccordion">
+        {% for rotograma in rotogramas %}
+        <div class="mb-2 rounded overflow-hidden">
+            <a href="#rotograma-details-{{ rotograma.id }}" class="list-group-item list-group-item-action" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="rotograma-details-{{ rotograma.id }}">
+                <h5 class="mb-0">{{ rotograma.nome_titulo }}</h5>
+            </a>
+            
+            <div class="collapse" id="rotograma-details-{{ rotograma.id }}" data-bs-parent="#rotogramaAccordion">
+                <div class="card card-body" style="border-top: none; border-radius: 0;">
+                    <ul class="list-unstyled mb-3">
+                        <li><strong>Origem:</strong> {{ rotograma.origem }}</li>
+                        <li><strong>Destino:</strong> {{ rotograma.destino }}</li>
+                        <li>
+                            <strong>Arquivo PDF:</strong>
+                            {% if rotograma.arquivo_pdf %}
+                                {% if perms.APP.view_gr_attachments %}
+                                <a href="{% url 'serve_rotograma_file' rotograma.pk %}" target="_blank"><i class="bi bi-file-pdf"></i> Visualizar PDF</a>
+                                {% endif %}
+                            {% else %}
+                                Nenhum arquivo enviado.
+                            {% endif %}
+                        </li>
+                    </ul>
+                    
+                    <div>
+                        {% if perms.APP.change_rotograma %}
+                        <button type="button" class="btn btn-secondary btn-sm edit-btn"
+                                data-bs-toggle="modal" data-bs-target="#rotogramaModal"
+                                data-id="{{ rotograma.id }}"
+                                data-nome-titulo="{{ rotograma.nome_titulo }}"
+                                data-origem="{{ rotograma.origem }}"
+                                data-destino="{{ rotograma.destino }}">
+                            Editar
+                        </button>
+                        {% endif %}
+                        {% if perms.APP.delete_rotograma %}
+                        <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-id="{{ rotograma.id }}"
+                                data-nome-titulo="{{ rotograma.nome_titulo }}">
+                            Excluir
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info" role="alert">
+            Nenhum rotograma cadastrado.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="modal fade" id="rotogramaModal" tabindex="-1" aria-labelledby="rotogramaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="rotogramaModalLabel">Adicionar Rotograma</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="rotogramaForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <small class="form-text text-muted">Ao editar, se um novo PDF for enviado, ele substituirá o arquivo anterior.</small>
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Confirmar Exclusão</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o rotograma <strong id="rotogramaNomeDelete"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal de Adicionar/Editar
+    const rotogramaModal = document.getElementById('rotogramaModal');
+    const modalLabel = document.getElementById('rotogramaModalLabel');
+    const rotogramaForm = document.getElementById('rotogramaForm');
+    
+    document.getElementById('btnNovoRotograma').addEventListener('click', function() {
+        modalLabel.textContent = 'Adicionar Novo Rotograma';
+        rotogramaForm.action = "{% url 'rotograma_create' %}";
+        rotogramaForm.reset();
+        document.getElementById('id_nome_titulo').value = '';
+        document.getElementById('id_origem').value = '';
+        document.getElementById('id_destino').value = '';
+        document.getElementById('id_arquivo_pdf').value = '';
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            modalLabel.textContent = 'Editar Rotograma';
+            const rotogramaId = this.dataset.id;
+            rotogramaForm.action = `/rotogramas/${rotogramaId}/update/`;
+            
+            // Popula o formulário
+            document.getElementById('id_nome_titulo').value = this.dataset.nomeTitulo;
+            document.getElementById('id_origem').value = this.dataset.origem;
+            document.getElementById('id_destino').value = this.dataset.destino;
+            document.getElementById('id_arquivo_pdf').value = ''; // Campo de arquivo não pode ser pré-populado
+        });
+    });
+
+    // Modal de Exclusão
+    const deleteForm = document.getElementById('deleteForm');
+    const rotogramaNomeDelete = document.getElementById('rotogramaNomeDelete');
+    
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const rotogramaId = this.dataset.id;
+            deleteForm.action = `/rotogramas/${rotogramaId}/delete/`;
+            rotogramaNomeDelete.textContent = this.dataset.nomeTitulo;
+        });
+    });
+});
+</script>
+{% endblock %}

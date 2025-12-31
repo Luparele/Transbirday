@@ -1,0 +1,208 @@
+{% extends 'APP/base.html' %}
+{% load static %} {% block title %}Dashboard - Transbirday{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Ajustes responsivos para título */
+    @media (max-width: 768px) {
+        .display-5 {
+            font-size: 2rem !important;
+        }
+        .fs-5 {
+            font-size: 1rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="p-4 mb-4 bg-light rounded-3 text-center">
+        <h1 class="display-5 fw-bold" style="color: #2c2e83;">
+            BEM-VINDO À <span style="color: #00a9e0;">TRANSBIRDAY</span>
+        </h1>
+        <p class="col-md-10 mx-auto fs-5 text-muted">
+            Acesso rápido e integrado aos setores de Gestão da <span class="fw-bold">Transbirday | Logística e Transporte</span>.
+        </p>
+    </div>
+    
+    <div class="row g-4 justify-content-center mb-5">
+        
+        {% if perms.APP.view_gr_module %}
+        <div class="col-lg-6 col-md-6">
+            <div class="card h-100 shadow-sm border-0 border-start border-5" style="border-color: #2c2e83 !important;">
+                <div class="card-body">
+                    <h4 class="card-title mb-4" style="color: #2c2e83;">
+                        <i class="bi bi-shield-fill me-2"></i> GERENCIAMENTO DE RISCO
+                    </h4>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'pgr_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            PGRs <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'checklist_view' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Checklists <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'rotograma_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Rotogramas <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'tarefa_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Tarefas GR <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'blacklist_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Black List <i class="bi bi-arrow-right"></i>
+                        </a>
+                        </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if perms.APP.view_security_module %}
+        <div class="col-lg-6 col-md-6">
+            <div class="card h-100 shadow-sm border-0 border-start border-5" style="border-color: #00a9e0 !important;">
+                <div class="card-body">
+                    <h4 class="card-title mb-4" style="color: #00a9e0;">
+                        <i class="bi bi-incognito me-2"></i> SECURITY
+                    </h4>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'seguro_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Gestão de Seguros <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'sinistro_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Gestão de Sinistros <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'veiculo_assegurado_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Veículos Assegurados <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'security_tarefa_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Tarefas Security <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if perms.APP.view_qsms_module %}
+        <div class="col-lg-6 col-md-6">
+            <div class="card h-100 shadow-sm border-0 border-start border-5" style="border-color: #808285 !important;">
+                <div class="card-body">
+                    <h4 class="card-title mb-4" style="color: #808285;">
+                        <i class="bi bi-calendar-check me-2"></i> QSMS
+                    </h4>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'certificado_qsms_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Gestão de Certificados <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'agenda_qsms_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Agenda (Eventos/Treinamentos) <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'qsms_tarefa_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Tarefas QSMS <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if perms.APP.view_farmaco_module %}
+        <div class="col-lg-6 col-md-6">
+            <div class="card h-100 shadow-sm border-0 border-start border-5" style="border-color: #28a745 !important;">
+                <div class="card-body">
+                    <h4 class="card-title mb-4" style="color: #28a745;">
+                        <i class="bi bi-capsule me-2"></i> FÁRMACO
+                    </h4>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'certificado_farmaco_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Gestão de Certificados <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'agenda_farmaco_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Agenda (Eventos/Treinamentos) <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{% url 'farmaco_tarefa_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Tarefas Fármaco <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if perms.APP.view_arquivosdiversos_module %}
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-6 col-md-10">
+            <div class="card shadow-sm text-center">
+                <a href="{% url 'arquivo_diverso_list' %}" class="list-group-item list-group-item-action list-group-item-dark py-3" style="font-size: 1.25rem;">
+                    <i class="bi bi-folder-fill me-2"></i> ACESSO A ARQUIVOS DIVERSOS (MINHA PASTA)
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<div id="lgpd-alert-container" style="
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100vh; 
+    z-index: 1060; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    pointer-events: none;
+">
+    <div id="lgpd-alert" class="alert alert-danger fade show m-3 shadow-lg" role="alert" style="
+        pointer-events: auto; 
+        max-width: 600px; 
+        width: 90%; /* Responsividade em telas menores */
+    ">
+        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i> ALERTA DE SEGURANÇA E LGPD</h5>
+        <p>
+            <strong>Atenção:</strong> Em conformidade com a Lei Geral de Proteção de Dados (LGPD), as informações e documentos acessados neste sistema são confidenciais e destinam-se <strong>exclusivamente ao uso interno</strong>. 
+            É <strong>proibido</strong> o compartilhamento ou divulgação destas informações e/ou documentos externamente, sem autorização expressa da gestão.
+        </p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar" id="close-lgpd-alert"></button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+$(document).ready(function() {
+    const alertContainer = $('#lgpd-alert-container');
+    const lgpdAlert = $('#lgpd-alert');
+    const closeButton = $('#close-lgpd-alert');
+
+    const localStorageKey = 'lgpdAlertDismissed';
+
+    // 1. Verificar se o usuário já dispensou o alerta
+    if (localStorage.getItem(localStorageKey) === 'true') {
+        alertContainer.hide();
+    } else {
+        // Alerta não foi dispensado, mostra (a centralização é feita pelo CSS)
+        alertContainer.show();
+    }
+
+    // 2. Definir o evento para fechar e salvar no LocalStorage
+    closeButton.on('click', function() {
+        localStorage.setItem(localStorageKey, 'true');
+        // Adiciona a classe 'hide' e remove o elemento após a transição
+        lgpdAlert.removeClass('show');
+        lgpdAlert.on('transitionend', function() {
+            alertContainer.hide();
+        });
+    });
+
+    // Se o usuário fechar clicando no 'X' padrão do Bootstrap
+    lgpdAlert.on('close.bs.alert', function () {
+        localStorage.setItem(localStorageKey, 'true');
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,326 @@
+{% extends 'APP/base.html' %}
+
+{% block title %}{{ titulo_pagina }} - Transbirday{% endblock %}
+
+{% block extra_head %}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    {{ form_tarefa.media }}
+    
+    <style>
+        .kanban-board {
+            display: flex;
+            flex-direction: row;
+            gap: 1.5rem;
+            min-height: 70vh;
+        }
+        .kanban-column {
+            flex: 1;
+            background-color: #f4f5f7;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        .kanban-column-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #5e6c84;
+        }
+        .kanban-card-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: none;
+            padding: 0;
+            background: none;
+            margin-bottom: 1rem;
+        }
+        .kanban-card {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: box-shadow 0.2s ease;
+        }
+        .kanban-card-button:hover .kanban-card {
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        }
+        .kanban-card .card-body {
+            padding: 0.75rem 1rem;
+        }
+        .kanban-card .card-header {
+            padding: 0.75rem 1rem;
+        }
+        .kanban-card .card-title {
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .kanban-board {
+                overflow-x: auto;
+            }
+            .kanban-column {
+                min-width: 320px;
+                width: 85%;
+                flex-shrink: 0;
+                flex: unset;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>{{ titulo_pagina }}</h2>
+        {% if perms.APP.add_farmacotarefa %}
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tarefaModal" id="btnNovaTarefa">
+            + Adicionar Tarefa
+        </button>
+        {% endif %}
+    </div>
+
+    <div class="kanban-board">
+        
+        <div class="kanban-column">
+            <h5 class="kanban-column-title">Pendentes ({{ tarefas_pendentes.count }})</h5>
+            <div class="tasks-wrapper">
+                {% for tarefa in tarefas_pendentes %}
+                <button type="button" class="kanban-card-button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#tarefaDetalheModal" 
+                        data-tarefa-id="{{ tarefa.id }}">
+                    <div class="card kanban-card"
+                         data-bs-toggle="tooltip" 
+                         data-bs-title="{{ tarefa.descricao|striptags|truncatechars:150 }}" 
+                         data-bs-placement="top">
+                        <div class="card-header bg-danger text-white">
+                            <h6 class="card-title">{{ tarefa.titulo }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text small text-muted mb-0">Criada em: {{ tarefa.criado_em|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                </button>
+                {% empty %}
+                <p class="text-center text-muted">Nenhuma tarefa pendente.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="kanban-column">
+            <h5 class="kanban-column-title">Iniciadas ({{ tarefas_iniciadas.count }})</h5>
+            <div class="tasks-wrapper">
+                {% for tarefa in tarefas_iniciadas %}
+                <button type="button" class="kanban-card-button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#tarefaDetalheModal" 
+                        data-tarefa-id="{{ tarefa.id }}">
+                    <div class="card kanban-card"
+                         data-bs-toggle="tooltip" 
+                         data-bs-title="{{ tarefa.descricao|striptags|truncatechars:150 }}" 
+                         data-bs-placement="top">
+                        <div class="card-header bg-warning text-dark">
+                            <h6 class="card-title">{{ tarefa.titulo }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text small text-muted mb-0">Criada em: {{ tarefa.criado_em|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                </button>
+                {% empty %}
+                <p class="text-center text-muted">Nenhuma tarefa iniciada.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="kanban-column">
+            <h5 class="kanban-column-title">Finalizadas ({{ tarefas_finalizadas.count }})</h5>
+            <div class="tasks-wrapper">
+                {% for tarefa in tarefas_finalizadas %}
+                <button type="button" class="kanban-card-button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#tarefaDetalheModal" 
+                        data-tarefa-id="{{ tarefa.id }}">
+                    <div class="card kanban-card bg-light"
+                         data-bs-toggle="tooltip" 
+                         data-bs-title="{{ tarefa.descricao|striptags|truncatechars:150 }}" 
+                         data-bs-placement="top">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="card-title">{{ tarefa.titulo }}</h6>
+                        </div>
+                        <div class="card-body">
+                             <p class="card-text small text-muted mb-0">Criada em: {{ tarefa.criado_em|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                </button>
+                {% empty %}
+                <p class="text-center text-muted">Nenhuma tarefa finalizada.</p>
+                {% endfor %}
+            </div>
+            {% if tarefas_finalizadas.count > 0 %}
+                <a href="?limite_finalizadas={{ limite_finalizadas }}" class="btn btn-outline-secondary btn-sm w-100 mt-2">Carregar +10</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="tarefaModal" tabindex="-1" aria-labelledby="tarefaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tarefaModalLabel">Adicionar Nova Tarefa</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="tarefaForm" action="{% url 'farmaco_tarefa_create' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                    {{ form_tarefa.as_p }}
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Tarefa</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="tarefaDetalheModal" tabindex="-1" aria-labelledby="tarefaDetalheModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="detalheModalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>Descrição</h5>
+                <div id="detalheModalDescricao" class="mb-3 p-2 bg-light rounded"></div>
+                <div id="detalheModalFormAcao" style="display: none;">
+                    <form id="acaoForm" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form_acao.as_p }}
+                        <button type="submit" class="btn btn-primary btn-sm">Adicionar Ação</button>
+                    </form>
+                    <hr>
+                </div>
+                <h5>Histórico</h5>
+                <ul id="detalheModalHistorico" class="list-group list-group-flush"></ul>
+            </div>
+            <div class="modal-footer" id="detalheModalFooter">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Permissão do Django passada para JavaScript
+const canAddTarefa = {% if perms.APP.add_farmacotarefa %}true{% else %}false{% endif %};
+
+$(document).ready(function() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    const editorId = 'id_descricao'; // ID padrão do campo 'descricao'
+
+    // --- Lógica para o Modal de CRIAÇÃO de Tarefa ---
+    $('#tarefaModal').on('shown.bs.modal', function () {
+        if(typeof CKEDITOR !== 'undefined' && !CKEDITOR.instances[editorId]) {
+            CKEDITOR.replace(editorId);
+        }
+    });
+    $('#tarefaModal').on('hidden.bs.modal', function () {
+        if (CKEDITOR.instances[editorId]) {
+            CKEDITOR.instances[editorId].destroy(true);
+        }
+    });
+
+    // --- Lógica para o Modal de DETALHES de Tarefa ---
+    const detalheModal = document.getElementById('tarefaDetalheModal');
+    const modalLabel = document.getElementById('detalheModalLabel');
+    const modalDescricao = document.getElementById('detalheModalDescricao');
+    const modalHistorico = document.getElementById('detalheModalHistorico');
+    const modalFooter = document.getElementById('detalheModalFooter');
+    const modalFormAcao = document.getElementById('detalheModalFormAcao');
+    const acaoForm = document.getElementById('acaoForm');
+
+    // ===================================================================
+    //                       INÍCIO DA ALTERAÇÃO (FÁRMACO)
+    // ===================================================================
+    // URLs embutidas para FÁRMACO
+    const urlDetalhesBase = "{% url 'farmaco_tarefa_detalhes' pk=999999 %}";
+    const urlAcaoBase = "{% url 'farmaco_tarefa_adicionar_acao' pk=999999 %}";
+    const urlIniciarBase = "{% url 'farmaco_tarefa_iniciar' pk=999999 %}";
+    const urlFinalizarBase = "{% url 'farmaco_tarefa_finalizar' pk=999999 %}";
+    const placeholder = "999999";
+    // ===================================================================
+    //                         FIM DA ALTERAÇÃO
+    // ===================================================================
+
+    detalheModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const tarefaId = button.dataset.tarefaId;
+        
+        const url = urlDetalhesBase.replace(placeholder, tarefaId);
+
+        modalLabel.textContent = 'Carregando...';
+        modalDescricao.innerHTML = '';
+        modalHistorico.innerHTML = '';
+        modalFooter.innerHTML = '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>';
+        modalFormAcao.style.display = 'none';
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) { throw new Error('Falha no fetch'); }
+                return response.json();
+            })
+            .then(data => {
+                modalLabel.textContent = data.titulo;
+                modalDescricao.innerHTML = data.descricao || '<p class="text-muted">Nenhuma descrição fornecida.</p>';
+                
+                if (data.historico && data.historico.length > 0) {
+                    data.historico.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = item;
+                        modalHistorico.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item text-muted';
+                    li.textContent = 'Nenhum histórico registrado.';
+                    modalHistorico.appendChild(li);
+                }
+
+                if (data.status === 'Pendente' && canAddTarefa) {
+                    const formHtml = `
+                        <form action="${urlIniciarBase.replace(placeholder, data.id)}" method="post" class="ms-auto">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Iniciar Tarefa</button>
+                        </form>
+                    `;
+                    modalFooter.insertAdjacentHTML('afterbegin', formHtml);
+                } 
+                else if (data.status === 'Iniciada' && canAddTarefa) {
+                    acaoForm.action = urlAcaoBase.replace(placeholder, data.id);
+                    modalFormAcao.style.display = 'block';
+                    const formHtml = `
+                        <form action="${urlFinalizarBase.replace(placeholder, data.id)}" method="post" class="ms-auto">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Finalizar Tarefa</button>
+                        </form>
+                    `;
+                    modalFooter.insertAdjacentHTML('afterbegin', formHtml);
+                }
+            })
+            .catch(error => {
+                modalLabel.textContent = 'Erro ao carregar';
+                modalDescricao.innerHTML = '<p class="text-danger">Não foi possível carregar os detalhes da tarefa.</p>';
+                console.error('Erro no fetch:', error);
+            });
+    });
+
+    detalheModal.addEventListener('hidden.bs.modal', function() {
+        acaoForm.reset();
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+<form id="pgrForm" action="{% url 'pgr_update' pgr.id %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {{ pgr_form.as_p }}
+
+    <hr>
+    <h4 class="mb-3">Regras de Embarque</h4>
+
+    {{ regra_formset.management_form }}
+    
+    <div id="regras-container">
+        {% for form in regra_formset %}
+            <div class="regra-form mb-3 p-3 border rounded">
+                <div class="mb-2">
+                    <label for="{{ form.titulo.id_for_label }}" class="form-label fw-bold fs-5 mb-1">{{ form.titulo.label }}</label>
+                    {{ form.titulo }}
+                </div>
+                <div class="mb-2">
+                    <label for="{{ form.descricao.id_for_label }}" class="form-label">{{ form.descricao.label }}</label>
+                    {{ form.descricao }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="empty-form" class="d-none">
+        <div class="regra-form mb-3 p-3 border rounded">
+            <div class="mb-2">
+                <label for="{{ regra_formset.empty_form.titulo.id_for_label }}" class="form-label fw-bold fs-5 mb-1">{{ regra_formset.empty_form.titulo.label }}</label>
+                {{ regra_formset.empty_form.titulo }}
+            </div>
+            <div class="mb-2">
+                <label for="{{ regra_formset.empty_form.descricao.id_for_label }}" class="form-label">{{ regra_formset.empty_form.descricao.label }}</label>
+                {{ regra_formset.empty_form.descricao }}
+            </div>
+        </div>
+    </div>
+
+    <button type="button" id="add-regra-btn" class="btn btn-outline-success btn-sm mt-2">+ Nova Regra de Embarque</button>
+
+    <div class="modal-footer mt-4">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    </div>
+</form>

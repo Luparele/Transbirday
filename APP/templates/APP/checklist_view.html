@@ -1,0 +1,218 @@
+{% extends 'APP/base.html' %}
+{% load static %}
+
+{% block title %}Checklists - Gerenciamento de Risco{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    /* Efeito de hover nas linhas da tabela de checklist */
+    .table-hover > tbody > tr:hover > * {
+        --bs-table-accent-bg: var(--bs-table-hover-bg);
+        color: var(--bs-table-hover-color);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+    
+    /* Estilo para o botão do acordeão e rotação do ícone */
+    .accordion-button-custom {
+        width: 100%;
+        text-align: left;
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        color: inherit;
+        font-weight: bold;
+        font-size: 1.25rem; /* Equivalente ao H5 */
+    }
+    .accordion-button-custom i {
+        transition: transform 0.2s ease-in-out;
+    }
+    .accordion-button-custom:not(.collapsed) i {
+        transform: rotate(-180deg);
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>GR - Checklists</h2>
+        {% if perms.APP.add_checklist %}
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#checklistModal" id="btnNovoChecklist">
+            + Adicionar Checklist
+        </button>
+        {% endif %}
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center py-2">
+                    <button class="accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGerenciadoras" aria-expanded="false" aria-controls="collapseGerenciadoras">
+                        Gerenciadoras de Risco
+                        <i class="bi bi-chevron-down ms-2"></i>
+                    </button>
+                    {% if perms.APP.add_gerenciadorarisco %}
+                    <button type="button" class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#grModal" id="btnNovaGR">+ Nova GR</button>
+                    {% endif %}
+                </div>
+                <div id="collapseGerenciadoras" class="accordion-collapse collapse">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead><tr><th>Nome</th><th>Validade Padrão</th><th class="text-end">Ações</th></tr></thead>
+                                <tbody>
+                                    {% for gr in gerenciadoras %}
+                                    <tr>
+                                        <td>{{ gr.nome }}</td>
+                                        <td>{{ gr.get_validade_checklist_display }}</td>
+                                        <td class="text-end">
+                                            {% if perms.APP.change_gerenciadorarisco %}
+                                            <button class="btn btn-secondary btn-sm edit-gr-btn" data-bs-toggle="modal" data-bs-target="#grModal" data-id="{{ gr.id }}" data-nome="{{ gr.nome }}" data-validade="{{ gr.validade_checklist }}">Editar</button>
+                                            {% endif %}
+                                            {% if perms.APP.delete_gerenciadorarisco %}
+                                            <button class="btn btn-danger btn-sm delete-gr-btn" data-bs-toggle="modal" data-bs-target="#deleteGrModal" data-id="{{ gr.id }}" data-nome="{{ gr.nome }}">Excluir</button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="3" class="text-center">Nenhuma gerenciadora cadastrada.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center py-2">
+                    <button class="accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVeiculos" aria-expanded="false" aria-controls="collapseVeiculos">
+                        Veículos Cadastrados
+                        <i class="bi bi-chevron-down ms-2"></i>
+                    </button>
+                    {% if perms.APP.add_veiculo %}
+                    <button type="button" class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#veiculoModal" id="btnNovoVeiculo">+ Novo Veículo</button>
+                    {% endif %}
+                </div>
+                <div id="collapseVeiculos" class="accordion-collapse collapse">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead><tr><th>Placa</th><th>Categoria</th><th>Tipo</th><th class="text-end">Ações</th></tr></thead>
+                                <tbody>
+                                    {% for veiculo in veiculos %}
+                                    <tr>
+                                        <td>{{ veiculo.placa }}</td>
+                                        <td>{{ veiculo.categoria }}</td>
+                                        <td>{{ veiculo.tipo }}</td>
+                                        <td class="text-end">
+                                            {% if perms.APP.change_veiculo %}
+                                            <button class="btn btn-secondary btn-sm edit-veiculo-btn" data-bs-toggle="modal" data-bs-target="#veiculoModal" data-id="{{ veiculo.id }}" data-placa="{{ veiculo.placa }}" data-categoria="{{ veiculo.categoria }}" data-tipo="{{ veiculo.tipo }}">Editar</button>
+                                            {% endif %}
+                                            {% if perms.APP.delete_veiculo %}
+                                            <button class="btn btn-danger btn-sm delete-veiculo-btn" data-bs-toggle="modal" data-bs-target="#deleteVeiculoModal" data-id="{{ veiculo.id }}" data-placa="{{ veiculo.placa }}">Excluir</button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="4" class="text-center">Nenhum veículo cadastrado.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% for grade_info in grades %}
+        <div class="d-flex align-items-baseline mt-5">
+            <h4>{{ grade_info.titulo }}</h4>
+            <small class="text-muted ms-2 fw-normal">(duplo clique na célula para editar)</small>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th style="width: 15%;">Veículo</th>
+                        {% for gr in gerenciadoras %}<th>{{ gr.nome }}</th>{% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in grade_info.dados %}
+                    <tr>
+                        <td class="fw-bold text-center align-middle">{{ item.veiculo.placa }}</td>
+                        {% for cell in item.status_list %}
+                            {% with c=cell.status.checklist %}
+                            <td class="text-center align-middle {{ cell.status.bg_color }}" 
+                                style="cursor: pointer;"
+                                data-bs-toggle="tooltip" 
+                                data-bs-html="true"
+                                data-bs-title="{% if c %}Placa: {{ item.veiculo.placa }}<br>GR: {{ c.gerenciadora.nome }}<br>Checklist Aprovado: {{ c.get_aprovado_display }}<br>Validade: {{ cell.status.validade|date:'d/m/Y'|default:'N/A' }}<br>Ultima modificação por: {{ c.ultimo_usuario.username|default:'N/A' }}{% else %}Adicionar Checklist para {{ item.veiculo.placa }}{% endif %}"
+                                data-veiculo-id="{{ item.veiculo.id }}"
+                                data-gr-id="{{ cell.gr.id }}"
+                                data-checklist-id="{{ c.id|default:'' }}"
+                                data-aprovado="{{ c.aprovado|default:'' }}"
+                                data-data-aprovacao="{{ c.data_aprovacao|date:'Y-m-d'|default:'' }}"
+                                data-data-fim-validade="{{ c.data_fim_validade|date:'Y-m-d'|default:'' }}"
+                                data-motivo-reprovacao="{{ c.motivo_reprovacao|default:'' }}">
+                                <span class="{{ cell.status.display_class }}">{{ cell.status.display_text }}</span>
+                            </td>
+                            {% endwith %}
+                        {% endfor %}
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="{{ gerenciadoras|length|add:1 }}" class="text-center">Nenhum veículo deste tipo cadastrado.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="modal fade" id="grModal" tabindex="-1" aria-labelledby="grModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h1 class="modal-title fs-5" id="grModalLabel"></h1><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><form id="grForm" method="post">{% csrf_token %}{{ form_gr.as_p }}<div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button><button type="submit" class="btn btn-primary">Salvar</button></div></form></div></div></div></div>
+<div class="modal fade" id="deleteGrModal" tabindex="-1" aria-labelledby="deleteGrModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h1 class="modal-title fs-5" id="deleteGrModalLabel">Confirmar Exclusão</h1><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><p>Tem certeza que deseja excluir a gerenciadora <strong id="nomeDeleteGR"></strong>?</p></div><div class="modal-footer"><form id="deleteGrForm" method="post">{% csrf_token %}<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger">Excluir</button></form></div></div></div></div>
+<div class="modal fade" id="veiculoModal" tabindex="-1" aria-labelledby="veiculoModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h1 class="modal-title fs-5" id="veiculoModalLabel"></h1><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><form id="veiculoForm" method="post">{% csrf_token %}{{ form_veiculo.as_p }}<div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button><button type="submit" class="btn btn-primary">Salvar</button></div></form></div></div></div></div>
+<div class="modal fade" id="deleteVeiculoModal" tabindex="-1" aria-labelledby="deleteVeiculoModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h1 class="modal-title fs-5" id="deleteVeiculoModalLabel">Confirmar Exclusão</h1><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><p>Tem certeza que deseja excluir o veículo <strong id="placaDelete"></strong>?</p></div><div class="modal-footer"><form id="deleteVeiculoForm" method="post">{% csrf_token %}<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger">Excluir</button></form></div></div></div></div>
+<div class="modal fade" id="checklistModal" tabindex="-1" aria-labelledby="checklistModalLabel" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h1 class="modal-title fs-5" id="checklistModalLabel"></h1><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">
+        <form id="checklistForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="veiculo" id="hidden_veiculo">
+            <input type="hidden" name="gerenciadora" id="hidden_gerenciadora">
+            <div class="mb-3"><label for="{{ form_checklist.veiculo.id_for_label }}" class="form-label">{{ form_checklist.veiculo.label }}</label>{{ form_checklist.veiculo }}</div>
+            <div class="mb-3"><label for="{{ form_checklist.gerenciadora.id_for_label }}" class="form-label">{{ form_checklist.gerenciadora.label }}</label>{{ form_checklist.gerenciadora }}</div>
+            <div class="mb-3"><label for="{{ form_checklist.aprovado.id_for_label }}" class="form-label">{{ form_checklist.aprovado.label }}</label>{{ form_checklist.aprovado }}</div>
+            <div class="mb-3" id="campo_data_aprovacao"><label for="{{ form_checklist.data_aprovacao.id_for_label }}" class="form-label">{{ form_checklist.data_aprovacao.label }}</label>{{ form_checklist.data_aprovacao }}</div>
+            <div class="mb-3" id="campo_data_fim_validade"><label for="{{ form_checklist.data_fim_validade.id_for_label }}" class="form-label">{{ form_checklist.data_fim_validade.label }}</label>{{ form_checklist.data_fim_validade }}</div>
+            <div class="mb-3" id="campo_motivo_reprovacao"><label for="{{ form_checklist.motivo_reprovacao.id_for_label }}" class="form-label">{{ form_checklist.motivo_reprovacao.label }}</label>{{ form_checklist.motivo_reprovacao }}</div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+        </form>
+    </div></div></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    const grModalLabel = document.getElementById('grModalLabel');const grForm = document.getElementById('grForm');document.getElementById('btnNovaGR').addEventListener('click', function() {grModalLabel.textContent = 'Adicionar Nova Gerenciadora';grForm.action = "{% url 'gerenciadora_create' %}";grForm.reset();});document.querySelectorAll('.edit-gr-btn').forEach(button => {button.addEventListener('click', function() {grModalLabel.textContent = 'Editar Gerenciadora';const grId = this.dataset.id;grForm.action = `/gerenciadoras/${grId}/update/`;document.getElementById('id_nome').value = this.dataset.nome;document.getElementById('id_validade_checklist').value = this.dataset.validade;});});const deleteGrForm = document.getElementById('deleteGrForm');const nomeDeleteSpan = document.getElementById('nomeDeleteGR');document.querySelectorAll('.delete-gr-btn').forEach(button => {button.addEventListener('click', function() {const grId = this.dataset.id;deleteGrForm.action = `/gerenciadoras/${grId}/delete/`;nomeDeleteSpan.textContent = this.dataset.nome;});});
+    const veiculoModalLabel = document.getElementById('veiculoModalLabel');const veiculoForm = document.getElementById('veiculoForm');document.getElementById('btnNovoVeiculo').addEventListener('click', function() {veiculoModalLabel.textContent = 'Adicionar Novo Veículo';veiculoForm.action = "{% url 'veiculo_create' %}";veiculoForm.reset();});document.querySelectorAll('.edit-veiculo-btn').forEach(button => {button.addEventListener('click', function() {veiculoModalLabel.textContent = 'Editar Veículo';const veiculoId = this.dataset.id;veiculoForm.action = `/veiculos/${veiculoId}/update/`;document.querySelector('#veiculoModal #id_placa').value = this.dataset.placa;document.querySelector('#veiculoModal #id_categoria').value = this.dataset.categoria;document.querySelector('#veiculoModal #id_tipo').value = this.dataset.tipo;});});const deleteVeiculoForm = document.getElementById('deleteVeiculoForm');const placaDeleteSpan = document.getElementById('placaDelete');document.querySelectorAll('.delete-veiculo-btn').forEach(button => {button.addEventListener('click', function() {const veiculoId = this.dataset.id;deleteVeiculoForm.action = `/veiculos/${veiculoId}/delete/`;placaDeleteSpan.textContent = this.dataset.placa;});});
+    const checklistModal = document.getElementById('checklistModal');const checklistModalLabel = document.getElementById('checklistModalLabel');const checklistForm = document.getElementById('checklistForm');const aprovadoField = document.getElementById('id_aprovado');const dataAprovacaoInput = document.getElementById('id_data_aprovacao');const dataFimValidadeInput = document.getElementById('id_data_fim_validade');const motivoReprovacaoWrapper = document.getElementById('campo_motivo_reprovacao');
+    dataAprovacaoInput.addEventListener('input', function() {if (this.value) {dataFimValidadeInput.value = '';dataFimValidadeInput.disabled = true;} else {dataFimValidadeInput.disabled = false;}});
+    dataFimValidadeInput.addEventListener('input', function() {if (this.value) {dataAprovacaoInput.value = '';dataAprovacaoInput.disabled = true;} else {dataAprovacaoInput.disabled = false;}});
+    function toggleChecklistFields() {const dataAprovacaoWrapper = dataAprovacaoInput.parentElement;const dataFimValidadeWrapper = dataFimValidadeInput.parentElement;if (aprovadoField.value === 'Sim') {dataAprovacaoWrapper.style.display = 'block';dataFimValidadeWrapper.style.display = 'block';motivoReprovacaoWrapper.style.display = 'none';} else if (aprovadoField.value === 'Não') {dataAprovacaoWrapper.style.display = 'none';dataFimValidadeWrapper.style.display = 'none';motivoReprovacaoWrapper.style.display = 'block';} else {dataAprovacaoWrapper.style.display = 'none';dataFimValidadeWrapper.style.display = 'none';motivoReprovacaoWrapper.style.display = 'none';}}
+    aprovadoField.addEventListener('change', toggleChecklistFields);
+    function resetModal(isCreationMode = true) {checklistForm.reset();toggleChecklistFields();dataAprovacaoInput.disabled = false;dataFimValidadeInput.disabled = false;document.getElementById('id_veiculo').disabled = false;document.getElementById('id_gerenciadora').disabled = false;document.getElementById('hidden_veiculo').value = '';document.getElementById('hidden_gerenciadora').value = '';if (isCreationMode) {checklistModalLabel.textContent = 'Adicionar Novo Checklist';checklistForm.action = "{% url 'checklist_create' %}";}}
+    document.getElementById('btnNovoChecklist').addEventListener('click', function() {resetModal(true);});
+    document.querySelectorAll('.table-hover td[data-veiculo-id]').forEach(cell => {cell.addEventListener('dblclick', function() {const data = this.dataset;resetModal(false);const veiculoSelect = document.getElementById('id_veiculo');const grSelect = document.getElementById('id_gerenciadora');veiculoSelect.value = data.veiculoId;grSelect.value = data.grId;if (data.checklistId) {checklistModalLabel.textContent = 'Editar Checklist';checklistForm.action = `/checklists/${data.checklistId}/update/`;veiculoSelect.disabled = true;grSelect.disabled = true;document.getElementById('hidden_veiculo').value = data.veiculoId;document.getElementById('hidden_gerenciadora').value = data.grId;aprovadoField.value = data.aprovado;dataAprovacaoInput.value = data.dataAprovacao;dataFimValidadeInput.value = data.dataFimValidade;document.getElementById('id_motivo_reprovacao').value = data.motivoReprovacao;} else {checklistModalLabel.textContent = 'Adicionar Novo Checklist';checklistForm.action = "{% url 'checklist_create' %}";}toggleChecklistFields();dataAprovacaoInput.dispatchEvent(new Event('input'));dataFimValidadeInput.dispatchEvent(new Event('input'));new bootstrap.Modal(checklistModal).show();});});
+});
+</script>
+{% endblock %}

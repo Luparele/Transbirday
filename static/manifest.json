@@ -1,0 +1,124 @@
+{
+  "name": "Transbirday - Sistema de Gestão",
+  "short_name": "Transbirday",
+  "description": "Sistema completo de gestão para Transportes Birday - GR, Security, QSMS e Fármaco",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2c2e83",
+  "theme_color": "#2c2e83",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/static/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Gerenciamento de Risco",
+      "short_name": "GR",
+      "description": "Acessar módulo de Gerenciamento de Risco",
+      "url": "/pgrs/",
+      "icons": [
+        {
+          "src": "/static/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Security",
+      "short_name": "Security",
+      "description": "Acessar módulo Security",
+      "url": "/seguros/",
+      "icons": [
+        {
+          "src": "/static/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "QSMS",
+      "short_name": "QSMS",
+      "description": "Acessar módulo QSMS",
+      "url": "/qsms/certificados/",
+      "icons": [
+        {
+          "src": "/static/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Fármaco",
+      "short_name": "Fármaco",
+      "description": "Acessar módulo Fármaco",
+      "url": "/farmaco/certificados/",
+      "icons": [
+        {
+          "src": "/static/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

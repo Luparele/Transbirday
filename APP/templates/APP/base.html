@@ -1,0 +1,288 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Transbirday{% endblock %}</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="description" content="Sistema completo de gestão para Transportes Birday - GR, Security, QSMS e Fármaco">
+  <meta name="theme-color" content="#2c2e83">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Transbirday">
+  
+  <!-- Favicons e Ícones -->
+  <link rel="icon" type="image/x-icon" href="{% static 'icons/favicon.ico' %}">
+  <link rel="apple-touch-icon" href="{% static 'icons/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="192x192" href="{% static 'icons/icon-192x192.png' %}">
+  <link rel="icon" type="image/png" sizes="512x512" href="{% static 'icons/icon-512x512.png' %}">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  
+  {% block extra_head %}{% endblock %}
+
+  <style>
+    /* Estilos globais para a aplicação */
+    .accordion-button-custom {
+        width: 100%;
+        text-align: left;
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        color: inherit;
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+    .accordion-button-custom i {
+        transition: transform 0.2s ease-in-out;
+    }
+    .accordion-button-custom:not(.collapsed) i {
+        transform: rotate(-180deg);
+    }
+    
+    /* Ajuste para o CKEditor não sobrepor o modal */
+    :root {
+        --ck-z-modal: 1060; /* Z-index do modal do Bootstrap é 1055 */
+    }
+
+    /* =================================================================== */
+    /* EFEITOS DE HOVER
+    /* =================================================================== */
+    
+    /* Adiciona transição suave para a mudança de cor */
+    .navbar-dark .navbar-nav .nav-link {
+        transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        border-radius: 0.25rem; /* Leve arredondamento para o efeito de fundo */
+        margin-left: 2px;
+        margin-right: 2px;
+    }
+
+    /* Cor da CÉLULA PRINCIPAL (nav-link) ao passar o mouse (Hover) */
+    .navbar-dark .navbar-nav .nav-link:hover,
+    .navbar-dark .navbar-nav .nav-link:focus {
+        color: #ffffff; /* Texto fica branco */
+        background-color: #00a9e0; /* Fundo Ciano */
+    }
+
+    /* Cor da CÉLULA DO SUBMENU (dropdown-item) ao passar o mouse (Hover) */
+    .navbar-dark .dropdown-item:hover,
+    .navbar-dark .dropdown-item:focus {
+        background-color: #00a9e0; /* Cor Ciano */
+        color: #ffffff; /* Texto branco */
+    }
+    
+    /* Diminui o espaço vertical dos itens do dropdown */
+    .dropdown-menu .dropdown-item {
+        padding-top: 0.15rem; /* Reduz o padding superior */
+        padding-bottom: 0.15rem; /* Reduz o padding inferior */
+    }
+
+    /* Diminui o espaço das linhas separadoras */
+    .dropdown-menu .dropdown-divider {
+        margin-top: 0.25rem; /* Reduz a margem superior */
+        margin-bottom: 0.25rem; /* Reduz a margem inferior */
+    }
+    /* =================================================================== */
+    /* FIM DOS ESTILOS
+    /* =================================================================== */
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #2c2e83;">
+  <div class="container-fluid">
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <a class="navbar-brand" href="{% url 'home' %}" style="color: #00a9e0; font-weight: bold;">
+        <span style="font-weight: normal;">TRANS</span>BIRDAY
+    </a>
+    
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      {% if user.is_authenticated %}
+      <ul class="navbar-nav me-auto">
+        
+        {% if perms.APP.view_gr_module %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Gerenciamento de Risco
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'pgr_list' %}">PGRs</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'checklist_view' %}">Checklists</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'rotograma_list' %}">Rotogramas</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'tarefa_list' %}">Tarefas</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'blacklist_list' %}">Black List</a></li>
+          </ul>
+        </li>
+        {% endif %}
+
+        {% if perms.APP.view_security_module %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Security
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'seguro_list' %}">Gestão de Seguros</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'sinistro_list' %}">Gestão de Sinistros</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'veiculo_assegurado_list' %}">Veículos Assegurados</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'security_tarefa_list' %}">Tarefas</a></li>
+          </ul>
+        </li>
+        {% endif %}
+
+        {% if perms.APP.view_qsms_module %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            QSMS
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'certificado_qsms_list' %}">Gestão de Certificados</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'agenda_qsms_list' %}">Agenda (Eventos/Treinamentos)</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'qsms_tarefa_list' %}">Tarefas</a></li>
+          </ul>
+        </li>
+        {% endif %}
+        
+        {% if perms.APP.view_farmaco_module %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Fármaco
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'certificado_farmaco_list' %}">Gestão de Certificados</a></li>
+                <li><a class="dropdown-item" href="{% url 'agenda_farmaco_list' %}">Agenda (Eventos/Treinamentos)</a></li>
+                <li><a class="dropdown-item" href="{% url 'farmaco_tarefa_list' %}">Tarefas</a></li>
+            </ul>
+        </li>
+        {% endif %}
+
+        {% if perms.APP.view_arquivosdiversos_module %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'arquivo_diverso_list' %}">
+            Arquivos Diversos
+          </a>
+        </li>
+        {% endif %}
+
+        {% if user.is_superuser %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">Admin Django</a>
+        </li>
+        {% endif %}
+      </ul>
+      {% endif %}
+
+      <ul class="navbar-nav ms-auto">
+        {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-fill"></i> Olá, {{ user.username }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{% url 'password_change' %}">Alterar Senha</a></li>
+                    {% if user.is_superuser %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'manage_users_list' %}"><i class="bi bi-people-fill me-2"></i>Gerenciar Usuários</a></li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Sair <i class="bi bi-box-arrow-right ms-2"></i></a></li>
+                </ul>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">
+                    <i class="bi bi-box-arrow-in-right"></i> Entrar
+                </a>
+            </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="{% if 'tarefas' in request.path %}container-fluid{% else %}container{% endif %}" style="padding-top: 80px; margin-bottom: 2rem;">
+    
+    {% if messages %}
+        <div class="container" style="padding-top: 1rem;">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    {% block content %}
+    {% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
+<!-- PWA Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/static/sw.js')
+        .then(registration => {
+          console.log('PWA: Service Worker registrado com sucesso:', registration.scope);
+          
+          // Verificar atualizações
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // Nova versão disponível
+                if (confirm('Nova versão do app disponível! Deseja atualizar agora?')) {
+                  window.location.reload();
+                }
+              }
+            });
+          });
+        })
+        .catch(error => {
+          console.log('PWA: Falha ao registrar Service Worker:', error);
+        });
+    });
+  }
+  
+  // Detectar instalação do PWA
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    console.log('PWA: Pronto para instalar');
+    
+    // Opcional: Mostrar botão de instalar customizado
+    // showInstallButton();
+  });
+  
+  window.addEventListener('appinstalled', () => {
+    console.log('PWA: App instalado com sucesso!');
+    deferredPrompt = null;
+  });
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
