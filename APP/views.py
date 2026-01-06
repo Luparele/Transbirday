@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+﻿ï»¿from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import formset_factory
 from django.db import transaction
 from datetime import date, timedelta
@@ -48,7 +48,7 @@ from .forms import (
 )
 
 # ===================================================================
-#    A view home NÃO precisa de login, mas as outras sim.
+#    A view home NÃO precisa de login, mas as outras sim.
 # ===================================================================
 def home_view(request):
     return render(request, 'APP/home.html')
@@ -120,7 +120,7 @@ def pgr_edit_form_view(request, pk):
 def checklist_view(request):
     gerenciadoras = GerenciadoraRisco.objects.all().order_by('nome')
     veiculos = Veiculo.objects.all()
-    veiculos_cavalos = veiculos.filter(tipo='Cavalo Mecânico').order_by('placa')
+    veiculos_cavalos = veiculos.filter(tipo='Cavalo Mecanico').order_by('placa')
     veiculos_carretas = veiculos.filter(tipo='Carreta').order_by('placa')
     checklists_map = {(c.veiculo_id, c.gerenciadora_id): c for c in Checklist.objects.select_related('ultimo_usuario', 'gerenciadora').all()}
     today = date.today()
@@ -128,7 +128,7 @@ def checklist_view(request):
         checklist = checklists_map.get((veiculo.id, gr.id))
         if not checklist:
             return {'checklist': None, 'bg_color': 'table-light', 'display_text': '--', 'display_class': 'text-muted'}
-        if checklist.aprovado == 'Não':
+        if checklist.aprovado == 'Nao':
             return {'checklist': checklist, 'bg_color': 'table-light', 'display_text': 'Reprovado', 'display_class': 'text-danger fw-bold'}
         validade_final = None
         if checklist.data_fim_validade:
@@ -148,7 +148,7 @@ def checklist_view(request):
             return {'checklist': checklist, 'bg_color': bg_color, 'display_text': display_text, 'display_class': display_class, 'validade': validade_final}
         return {'checklist': checklist, 'bg_color': 'table-success', 'display_text': 'Aprovado', 'display_class': '', 'validade': None}
     grades = [
-        {'titulo': 'Cavalos Mecânicos', 'dados': [{'veiculo': v, 'status_list': [{'gr': gr, 'status': get_status_data(v, gr)} for gr in gerenciadoras]} for v in veiculos_cavalos]},
+        {'titulo': 'Cavalos Mecanicos', 'dados': [{'veiculo': v, 'status_list': [{'gr': gr, 'status': get_status_data(v, gr)} for gr in gerenciadoras]} for v in veiculos_cavalos]},
         {'titulo': 'Carretas', 'dados': [{'veiculo': v, 'status_list': [{'gr': gr, 'status': get_status_data(v, gr)} for gr in gerenciadoras]} for v in veiculos_carretas]},
     ]
     context = {
@@ -460,7 +460,7 @@ def security_tarefa_adicionar_acao_view(request, pk):
         acao.save()
     return redirect('security_tarefa_list')
 
-# --- VIEWS DE SEGUROS, SINISTROS E VEÍCULOS ASSEGURADOS (COM @login_required) ---
+# --- VIEWS DE SEGUROS, SINISTROS E VEÃCULOS ASSEGURADOS (COM @login_required) ---
 
 @login_required
 @permission_required('APP.view_security_module', raise_exception=True)
@@ -613,7 +613,7 @@ def veiculo_assegurado_update_view(request, pk):
     form = VeiculoAsseguradoForm(request.POST, instance=veiculo)
     if form.is_valid():
         form.save()
-        messages.success(request, 'Veículo assegurado atualizado com sucesso!')
+        messages.success(request, 'VeÃ­culo assegurado atualizado com sucesso!')
     else:
         for field, errors in form.errors.items():
             for error in errors:
@@ -756,7 +756,7 @@ def agenda_qsms_edit_form_view(request, pk):
 def agenda_qsms_update_view(request, pk):
     evento = get_object_or_404(AgendaQSMS, pk=pk)
     if not (request.user == evento.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "Você não tem permissão para editar este item.")
+        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para editar este item.")
         return redirect('agenda_qsms_list')
 
     form = AgendaQSMSForm(request.POST, instance=evento)
@@ -774,12 +774,12 @@ def agenda_qsms_update_view(request, pk):
 def agenda_qsms_delete_view(request, pk):
     evento = get_object_or_404(AgendaQSMS, pk=pk)
     if not (request.user == evento.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "Você não tem permissão para excluir este item.")
+        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para excluir este item.")
         return redirect('agenda_qsms_list')
         
     tipo_display = evento.get_tipo_display()
     evento.delete()
-    messages.success(request, f"{tipo_display} excluído com sucesso.")
+    messages.success(request, f"{tipo_display} excluÃ­do com sucesso.")
     return redirect('agenda_qsms_list')
 
 
@@ -860,11 +860,11 @@ def qsms_tarefa_finalizar_view(request, pk):
 @permission_required('APP.view_qsms_module', raise_exception=True)
 def qsms_tarefa_detalhes_json(request, pk):
     # ===================================================================
-    #           INÍCIO DA CORREÇÃO (TYPO 40F -> 404)
+    #           INÃCIO DA CORREÃÃO (TYPO 40F -> 404)
     # ===================================================================
     tarefa = get_object_or_404(QsmsTarefa, pk=pk)
     # ===================================================================
-    #                         FIM DA CORREÇÃO
+    #                         FIM DA CORREÃÃO
     # ===================================================================
     historico = tarefa.historico.all().values('timestamp', 'acao', 'usuario__username')
     historico_list = [
@@ -904,7 +904,7 @@ def arquivo_diverso_list_view(request):
             messages.success(request, "Arquivo salvo com sucesso!")
             return redirect('arquivo_diverso_list')
     
-    # Se tiver permissão view_all, mostra todos os arquivos
+    # Se tiver permissÃ£o view_all, mostra todos os arquivos
     if request.user.has_perm('APP.view_all_arquivodiverso'):
         arquivos = ArquivoDiverso.objects.all().order_by('titulo')
     else:
@@ -959,7 +959,7 @@ def arquivo_diverso_delete_view(request, pk):
         arquivo = get_object_or_404(ArquivoDiverso, pk=pk, responsavel_cadastro=request.user)
     
     arquivo.delete()
-    messages.success(request, "Arquivo excluído com sucesso.")
+    messages.success(request, "Arquivo excluÃ­do com sucesso.")
     return redirect('arquivo_diverso_list')
 
 
@@ -974,12 +974,12 @@ def blacklist_list_view(request):
             condutor = form.save(commit=False)
             condutor.responsavel_cadastro = request.user
             condutor.save()
-            messages.success(request, "Condutor adicionado à Blacklist com sucesso!")
+            messages.success(request, "Condutor adicionado Ã  Blacklist com sucesso!")
             return redirect('blacklist_list')
         else:
             messages.error(request, f"Erro ao salvar: {form.errors.as_text()}")
 
-    # Lógica de Busca
+    # LÃ³gica de Busca
     query = request.GET.get('q')
     if query:
         condutores = CondutorBlacklist.objects.filter(
@@ -1000,7 +1000,7 @@ def blacklist_list_view(request):
 def blacklist_update_view(request, pk):
     condutor = get_object_or_404(CondutorBlacklist, pk=pk)
     if not (request.user == condutor.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "Você não tem permissão para editar este condutor.")
+        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para editar este condutor.")
         return redirect('blacklist_list')
 
     form = CondutorBlacklistForm(request.POST, instance=condutor)
@@ -1031,7 +1031,7 @@ def blacklist_edit_form_view(request, pk):
 def blacklist_delete_view(request, pk):
     condutor = get_object_or_404(CondutorBlacklist, pk=pk)
     if not (request.user == condutor.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "Você não tem permissão para excluir este condutor.")
+        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para excluir este condutor.")
         return redirect('blacklist_list')
         
     condutor.delete()
@@ -1039,11 +1039,11 @@ def blacklist_delete_view(request, pk):
     return redirect('blacklist_list')
 
 
-# --- VIEWS DE AUTENTICAÇÃO ---
+# --- VIEWS DE AUTENTICAÃÃO ---
 
-# Função auxiliar para verificar superuser (usada em múltiplas views)
+# FunÃ§Ã£o auxiliar para verificar superuser (usada em mÃºltiplas views)
 def is_superuser(user):
-    """Verifica se o usuário é superuser"""
+    """Verifica se o usuÃ¡rio Ã© superuser"""
     return user.is_superuser
 
 class CustomLoginView(LoginView):
@@ -1056,18 +1056,18 @@ class CustomLoginView(LoginView):
 def custom_logout_view(request):
     """View de logout."""
     logout(request)
-    messages.success(request, 'Você saiu da sua conta com sucesso.')
+    messages.success(request, 'VocÃª saiu da sua conta com sucesso.')
     return redirect('login') 
 
 class CustomPasswordChangeView(PasswordChangeView):
-    """View de alteração de senha customizada."""
+    """View de alteraÃ§Ã£o de senha customizada."""
     form_class = CustomPasswordChangeForm
     template_name = 'APP/password_change.html'
     success_url = reverse_lazy('password_change_done')
 
 @login_required
 def password_change_done_view(request):
-    """View de confirmação de alteração de senha."""
+    """View de confirmaÃ§Ã£o de alteraÃ§Ã£o de senha."""
     messages.success(request, 'Sua senha foi alterada com sucesso!')
     return redirect('home')
 
@@ -1183,7 +1183,7 @@ def agenda_farmaco_edit_form_view(request, pk):
 def agenda_farmaco_update_view(request, pk):
     evento = get_object_or_404(AgendaFarmaco, pk=pk)
     if not (request.user == evento.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "Você não tem permissão para editar este item.")
+        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para editar este item.")
         return redirect('agenda_farmaco_list')
 
     form = AgendaFarmacoForm(request.POST, instance=evento)
@@ -1200,12 +1200,12 @@ def agenda_farmaco_update_view(request, pk):
 def agenda_farmaco_delete_view(request, pk):
     evento = get_object_or_404(AgendaFarmaco, pk=pk)
     if not (request.user == evento.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "Você não tem permissão para excluir este item.")
+        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para excluir este item.")
         return redirect('agenda_farmaco_list')
         
     tipo_display = evento.get_tipo_display()
     evento.delete()
-    messages.success(request, f"{tipo_display} excluído com sucesso.")
+    messages.success(request, f"{tipo_display} excluÃ­do com sucesso.")
     return redirect('agenda_farmaco_list')
 
 @login_required
@@ -1227,7 +1227,7 @@ def farmaco_tarefa_kanban_view(request):
         'form_tarefa': FarmacoTarefaForm(),
         'form_acao': FarmacoHistoricoTarefaForm(),
         'limite_finalizadas': limite_finalizadas + 10,
-        'titulo_pagina': 'Fármaco - Tarefas',
+        'titulo_pagina': 'FÃ¡rmaco - Tarefas',
     }
     return render(request, 'APP/tarefa_kanban_farmaco.html', context)
 
@@ -1308,31 +1308,31 @@ def farmaco_tarefa_adicionar_acao_view(request, pk):
     return redirect('farmaco_tarefa_list')
 
 # ===================================================================
-#           VIEWS DE GERENCIAMENTO DE USUÁRIOS E PERMISSÕES
+#           VIEWS DE GERENCIAMENTO DE USUÃRIOS E PERMISSÃES
 # ===================================================================
 
 @user_passes_test(is_superuser)
 def manage_users_list(request):
-    """Lista todos os usuários do sistema"""
+    """Lista todos os usuÃ¡rios do sistema"""
     users = User.objects.all().order_by('username')
     context = {'users': users}
     return render(request, 'APP/manage_users_list.html', context)
 
 @user_passes_test(is_superuser)
 def manage_user_permissions(request, user_id=None):
-    """Criar ou editar usuário com permissões"""
+    """Criar ou editar usuÃ¡rio com permissÃµes"""
     if user_id:
         user = get_object_or_404(User, pk=user_id)
-        form_title = f"Editar Usuário: {user.username}"
+        form_title = f"Editar UsuÃ¡rio: {user.username}"
     else:
         user = None
-        form_title = "Criar Novo Usuário"
+        form_title = "Criar Novo UsuÃ¡rio"
     
     if request.method == 'POST':
         form = UserPermissionsForm(request.POST, instance=user)
         if form.is_valid():
             new_user = form.save()
-            messages.success(request, f'Usuário {new_user.username} salvo com sucesso!')
+            messages.success(request, f'UsuÃ¡rio {new_user.username} salvo com sucesso!')
             return redirect('manage_users_list')
     else:
         form = UserPermissionsForm(instance=user)
@@ -1347,16 +1347,16 @@ def manage_user_permissions(request, user_id=None):
 @user_passes_test(is_superuser)
 @require_POST
 def delete_user(request, user_id):
-    """Excluir usuário"""
+    """Excluir usuÃ¡rio"""
     user = get_object_or_404(User, pk=user_id)
     if user == request.user:
-        messages.error(request, 'Você não pode excluir seu próprio usuário!')
+        messages.error(request, 'VocÃª nÃ£o pode excluir seu prÃ³prio usuÃ¡rio!')
     elif user.is_superuser:
-        messages.error(request, 'Não é possível excluir um superusuário!')
+        messages.error(request, 'NÃ£o Ã© possÃ­vel excluir um superusuÃ¡rio!')
     else:
         username = user.username
         user.delete()
-        messages.success(request, f'Usuário {username} excluído com sucesso!')
+        messages.success(request, f'UsuÃ¡rio {username} excluÃ­do com sucesso!')
     return redirect('manage_users_list')
 
 # ===================================================================
@@ -1369,84 +1369,84 @@ from django.conf import settings
 
 @login_required
 def serve_pgr_file(request, pk):
-    """Serve arquivo PDF do PGR com permissão"""
-    # Verifica permissão do módulo OU permissão específica de anexos
+    """Serve arquivo PDF do PGR com permissÃ£o"""
+    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
     if not (request.user.has_perm('APP.view_gr_module') or request.user.has_perm('APP.view_gr_attachments')):
-        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
+        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
     
     pgr = get_object_or_404(PGR, pk=pk)
     if pgr.arquivo_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(pgr.arquivo_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo não encontrado")
+    raise Http404("Arquivo nÃ£o encontrado")
 
 @login_required
 def serve_rotograma_file(request, pk):
-    """Serve arquivo PDF do Rotograma com permissão"""
-    # Verifica permissão do módulo OU permissão específica de anexos
+    """Serve arquivo PDF do Rotograma com permissÃ£o"""
+    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
     if not (request.user.has_perm('APP.view_gr_module') or request.user.has_perm('APP.view_gr_attachments')):
-        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
+        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
     
     rotograma = get_object_or_404(Rotograma, pk=pk)
     if rotograma.arquivo_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(rotograma.arquivo_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo não encontrado")
+    raise Http404("Arquivo nÃ£o encontrado")
 
 @login_required
 def serve_seguro_apolice_file(request, pk):
-    """Serve arquivo de apólice do Seguro com permissão"""
-    # Verifica permissão do módulo OU permissão específica de anexos
+    """Serve arquivo de apÃ³lice do Seguro com permissÃ£o"""
+    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
     if not (request.user.has_perm('APP.view_security_module') or request.user.has_perm('APP.view_security_attachments')):
-        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
+        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
     
     seguro = get_object_or_404(Seguro, pk=pk)
     if seguro.apolice_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(seguro.apolice_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo não encontrado")
+    raise Http404("Arquivo nÃ£o encontrado")
 
 @login_required
 def serve_seguro_certificado_file(request, pk):
-    """Serve arquivo de certificado do Seguro com permissão"""
-    # Verifica permissão do módulo OU permissão específica de anexos
+    """Serve arquivo de certificado do Seguro com permissÃ£o"""
+    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
     if not (request.user.has_perm('APP.view_security_module') or request.user.has_perm('APP.view_security_attachments')):
-        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
+        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
     
     seguro = get_object_or_404(Seguro, pk=pk)
     if seguro.certificado_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(seguro.certificado_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo não encontrado")
+    raise Http404("Arquivo nÃ£o encontrado")
 
 @login_required
 def serve_certificado_qsms_file(request, pk):
-    """Serve arquivo PDF do Certificado QSMS com permissão"""
-    # Verifica permissão do módulo OU permissão específica de anexos
+    """Serve arquivo PDF do Certificado QSMS com permissÃ£o"""
+    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
     if not (request.user.has_perm('APP.view_qsms_module') or request.user.has_perm('APP.view_qsms_attachments')):
-        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
+        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
     
     certificado = get_object_or_404(CertificadoQSMS, pk=pk)
     if certificado.arquivo_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(certificado.arquivo_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo não encontrado")
+    raise Http404("Arquivo nÃ£o encontrado")
 
 @login_required
 def serve_certificado_farmaco_file(request, pk):
-    """Serve arquivo PDF do Certificado Fármaco com permissão"""
-    # Verifica permissão do módulo OU permissão específica de anexos
+    """Serve arquivo PDF do Certificado FÃ¡rmaco com permissÃ£o"""
+    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
     if not (request.user.has_perm('APP.view_farmaco_module') or request.user.has_perm('APP.view_farmaco_attachments')):
-        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
+        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
     
     certificado = get_object_or_404(CertificadoFarmaco, pk=pk)
     if certificado.arquivo_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(certificado.arquivo_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo não encontrado")
+    raise Http404("Arquivo nÃ£o encontrado")

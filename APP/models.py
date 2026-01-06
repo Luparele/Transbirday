@@ -1,14 +1,14 @@
-from django.db import models
+﻿ï»¿from django.db import models
 from django.contrib.auth.models import User
 # ===================================================================
-#                       INÍCIO DAS ADIÇÕES
+#                       INÃÂCIO DAS ADIÃâ¡Ãâ¢ES
 # ===================================================================
 from django.core.validators import RegexValidator
 # ===================================================================
-#                         FIM DAS ADIÇÕES
+#                         FIM DAS ADIÃâ¡Ãâ¢ES
 # ===================================================================
 
-# GR – Gerenciamento de Risco
+# GR Ã¢â¬â Gerenciamento de Risco
 class RegraEmbarque(models.Model):
     titulo = models.CharField(max_length=255)
     descricao = models.TextField()
@@ -18,9 +18,9 @@ class RegraEmbarque(models.Model):
 
 class PGR(models.Model):
     class TipoSeguro(models.TextChoices):
-        PROPRIO = 'Próprio', 'Próprio'
+        PROPRIO = 'PrÃÂ³prio', 'PrÃÂ³prio'
         DDR = 'DDR', 'DDR'
-    titulo_cliente = models.CharField(max_length=255, verbose_name="Título do PGR (Cliente)")
+    titulo_cliente = models.CharField(max_length=255, verbose_name="TÃÂ­tulo do PGR (Cliente)")
     validade = models.DateField(verbose_name="Validade do PGR")
     gerente_conta = models.CharField(max_length=100, blank=True, null=True, verbose_name="Gerente de Conta")
     contato_gc = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefone de Contato do GC")
@@ -38,7 +38,7 @@ class Veiculo(models.Model):
         FROTA = 'Frota', 'Frota'
         AGREGADO = 'Agregado', 'Agregado'
     class Tipo(models.TextChoices):
-        CAVALO = 'Cavalo Mecânico', 'Cavalo Mecânico'
+        CAVALO = 'Cavalo Mecanico', 'Cavalo Mecanico'
         CARRETA = 'Carreta', 'Carreta'
     placa = models.CharField(max_length=10, unique=True)
     categoria = models.CharField(max_length=10, choices=Categoria.choices)
@@ -61,11 +61,11 @@ class GerenciadoraRisco(models.Model):
 class Checklist(models.Model):
     class Aprovado(models.TextChoices):
         SIM = 'Sim', 'Sim'
-        NAO = 'Não', 'Não'
+        NAO = 'Nao', 'Nao'
     veiculo = models.ForeignKey(Veiculo, on_delete=models.CASCADE)
     gerenciadora = models.ForeignKey(GerenciadoraRisco, on_delete=models.CASCADE, verbose_name="GR")
-    aprovado = models.CharField(max_length=3, choices=Aprovado.choices)
-    data_aprovacao = models.DateField(blank=True, null=True, verbose_name="Data de Aprovação/Realização")
+    aprovado = models.CharField(max_length=5, choices=Aprovado.choices)
+    data_aprovacao = models.DateField(blank=True, null=True, verbose_name="Data de AprovaÃÂ§ÃÂ£o/RealizaÃÂ§ÃÂ£o")
     data_fim_validade = models.DateField(blank=True, null=True, verbose_name="Data de Fim da Validade Manual")
     motivo_reprovacao = models.TextField(blank=True, null=True)
     ultimo_usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="checklists_alterados")
@@ -75,7 +75,7 @@ class Checklist(models.Model):
         return f"{self.veiculo.placa} - {self.gerenciadora.nome}"
 
 class Rotograma(models.Model):
-    nome_titulo = models.CharField(max_length=255, verbose_name="Nome/Título")
+    nome_titulo = models.CharField(max_length=255, verbose_name="Nome/TÃÂ­tulo")
     origem = models.CharField(max_length=150)
     destino = models.CharField(max_length=150)
     arquivo_pdf = models.FileField(upload_to='rotogramas_pdfs/', verbose_name="Arquivo PDF do Rotograma")
@@ -84,7 +84,7 @@ class Rotograma(models.Model):
         return self.nome_titulo
 
 # ===================================================================
-#           INÍCIO DO NOVO MODELO (BLACK LIST)
+#           INÃÂCIO DO NOVO MODELO (BLACK LIST)
 # ===================================================================
 class CondutorBlacklist(models.Model):
     cpf_validator = RegexValidator(
@@ -95,7 +95,7 @@ class CondutorBlacklist(models.Model):
     nome_completo = models.CharField(max_length=255, verbose_name="Nome Completo")
     cpf = models.CharField(max_length=14, unique=True, validators=[cpf_validator], verbose_name="CPF")
     data_pesquisa = models.DateField(verbose_name="Data da Pesquisa")
-    motivo_reprovacao = models.TextField(verbose_name="Motivo da Reprovação")
+    motivo_reprovacao = models.TextField(verbose_name="Motivo da ReprovaÃÂ§ÃÂ£o")
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="condutores_blacklist_cadastrados")
     criado_em = models.DateTimeField(auto_now_add=True)
 
@@ -107,7 +107,7 @@ class CondutorBlacklist(models.Model):
     def __str__(self):
         return f"{self.nome_completo} ({self.cpf})"
 # ===================================================================
-#                         FIM DAS ADIÇÕES
+#                         FIM DAS ADIÃâ¡Ãâ¢ES
 # ===================================================================
 
 # Modelos de Tarefa de GR (EXISTENTES)
@@ -171,22 +171,22 @@ class SecurityHistoricoTarefa(models.Model):
     
     class Meta:
         ordering = ['timestamp']
-        verbose_name = "Histórico de Tarefa de Security"
-        verbose_name_plural = "Históricos de Tarefas de Security"
+        verbose_name = "HistÃÂ³rico de Tarefa de Security"
+        verbose_name_plural = "HistÃÂ³ricos de Tarefas de Security"
 
     def __str__(self):
         return f"[Security] {self.tarefa.titulo} - {self.timestamp.strftime('%d/%m/%Y %H:%M')}"
 
 class Seguro(models.Model):
     seguradora = models.CharField(max_length=100)
-    tipo_apolice = models.CharField(max_length=100, verbose_name="Tipo de Apólice")
+    tipo_apolice = models.CharField(max_length=100, verbose_name="Tipo de ApÃÂ³lice")
     corretora = models.CharField(max_length=100)
     corretor = models.CharField(max_length=100)
     contato_corretor = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefone de Contato")
     email_corretor = models.EmailField(blank=True, null=True, verbose_name="E-mail do Corretor")
-    vigencia = models.DateField(verbose_name="Vigência do Seguro")
-    descricao_resumo = models.TextField(blank=True, null=True, verbose_name="Descrição/Resumo")
-    apolice_pdf = models.FileField(upload_to='seguros/apolices/', verbose_name="Upload da Apólice (PDF)")
+    vigencia = models.DateField(verbose_name="VigÃÂªncia do Seguro")
+    descricao_resumo = models.TextField(blank=True, null=True, verbose_name="DescriÃÂ§ÃÂ£o/Resumo")
+    apolice_pdf = models.FileField(upload_to='seguros/apolices/', verbose_name="Upload da ApÃÂ³lice (PDF)")
     certificado_pdf = models.FileField(upload_to='seguros/certificados/', verbose_name="Upload do Certificado (PDF)")
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="seguros_cadastrados")
 
@@ -199,7 +199,7 @@ class Sinistro(models.Model):
         FINALIZADO = 'Finalizado', 'Finalizado'
     data_sinistro = models.DateField(verbose_name="Data do Sinistro")
     hora_sinistro = models.TimeField(verbose_name="Hora do Sinistro")
-    seguradora_responsavel = models.CharField(max_length=100, verbose_name="Seguradora Responsável")
+    seguradora_responsavel = models.CharField(max_length=100, verbose_name="Seguradora ResponsÃÂ¡vel")
     status = models.CharField(max_length=20, choices=StatusSinistro.choices, default=StatusSinistro.EM_ANDAMENTO)
     detalhes = models.TextField(verbose_name="Detalhes")
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="sinistros_cadastrados")
@@ -212,11 +212,11 @@ class VeiculoAssegurado(models.Model):
         TOTAL = 'Total', 'Total'
         TERCEIROS = 'Apenas Terceiros', 'Apenas Terceiros'
     seguradora = models.CharField(max_length=100)
-    vigencia = models.DateField(verbose_name="Vigência")
+    vigencia = models.DateField(verbose_name="VigÃÂªncia")
     placa = models.CharField(max_length=10)
     marca = models.CharField(max_length=50)
     modelo = models.CharField(max_length=50)
-    ano_fabricacao = models.IntegerField(verbose_name="Ano de Fabricação")
+    ano_fabricacao = models.IntegerField(verbose_name="Ano de FabricaÃÂ§ÃÂ£o")
     ano_modelo = models.IntegerField(verbose_name="Ano do Modelo")
     cobertura = models.CharField(max_length=20, choices=CoberturaTipo.choices, default=CoberturaTipo.TOTAL)
     valor_fipe_percent = models.IntegerField(verbose_name="Valor FIPE (%)")
@@ -226,7 +226,7 @@ class VeiculoAssegurado(models.Model):
     danos_morais = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Danos Morais")
     app_morte = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="APP Morte")
     app_invalidez = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="APP Invalidez")
-    assistencia_km = models.IntegerField(verbose_name="Reboque/Assistência 24h (KM)")
+    assistencia_km = models.IntegerField(verbose_name="Reboque/AssistÃÂªncia 24h (KM)")
     carro_reserva_dias = models.IntegerField(verbose_name="Carro Reserva (dias)")
     cobertura_vidros = models.BooleanField(default=False, verbose_name="Cobertura extra para vidros")
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="veiculos_assegurados_cadastrados")
@@ -239,11 +239,11 @@ class VeiculoAssegurado(models.Model):
 # ===================================================================
 class CertificadoQSMS(models.Model):
     certificado = models.CharField(max_length=255, verbose_name="Certificado") 
-    orgao_competente = models.CharField(max_length=255, verbose_name="Órgão Competente") 
-    link_orgao = models.URLField(max_length=255, blank=True, null=True, verbose_name="Link do Órgão") 
+    orgao_competente = models.CharField(max_length=255, verbose_name="ÃârgÃÂ£o Competente") 
+    link_orgao = models.URLField(max_length=255, blank=True, null=True, verbose_name="Link do ÃârgÃÂ£o") 
     validade = models.DateField(verbose_name="Validade") 
     arquivo_pdf = models.FileField(upload_to='qsms/certificados_pdf/', verbose_name="Upload de Certificado PDF") 
-    descricao = models.TextField(blank=True, null=True, verbose_name="Descrição") 
+    descricao = models.TextField(blank=True, null=True, verbose_name="DescriÃÂ§ÃÂ£o") 
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="certificados_qsms_cadastrados")
 
     class Meta:
@@ -302,8 +302,8 @@ class QsmsHistoricoTarefa(models.Model):
     
     class Meta:
         ordering = ['timestamp']
-        verbose_name = "Histórico de Tarefa de QSMS"
-        verbose_name_plural = "Históricos de Tarefas de QSMS"
+        verbose_name = "HistÃÂ³rico de Tarefa de QSMS"
+        verbose_name_plural = "HistÃÂ³ricos de Tarefas de QSMS"
 
     def __str__(self):
         return f"[QSMS] {self.tarefa.titulo} - {self.timestamp.strftime('%d/%m/%Y %H:%M')}"
@@ -312,8 +312,8 @@ class QsmsHistoricoTarefa(models.Model):
 #           MODELO DE ARQUIVOS DIVERSOS
 # ===================================================================
 class ArquivoDiverso(models.Model):
-    titulo = models.CharField(max_length=255, verbose_name="Título")
-    descricao = models.TextField(blank=True, null=True, verbose_name="Descrição do Documento")
+    titulo = models.CharField(max_length=255, verbose_name="TÃÂ­tulo")
+    descricao = models.TextField(blank=True, null=True, verbose_name="DescriÃÂ§ÃÂ£o do Documento")
     arquivo_pdf = models.FileField(upload_to='arquivos_diversos/', verbose_name="Upload de Arquivo PDF")
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="arquivos_diversos_cadastrados")
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -327,21 +327,21 @@ class ArquivoDiverso(models.Model):
         return self.titulo
 
 # ===================================================================
-#           MODELOS DE FÁRMACO
+#           MODELOS DE FÃÂRMACO
 # ===================================================================
 class CertificadoFarmaco(models.Model):
     certificado = models.CharField(max_length=255, verbose_name="Certificado") 
-    orgao_competente = models.CharField(max_length=255, verbose_name="Órgão Competente") 
-    link_orgao = models.URLField(max_length=255, blank=True, null=True, verbose_name="Link do Órgão") 
+    orgao_competente = models.CharField(max_length=255, verbose_name="ÃârgÃÂ£o Competente") 
+    link_orgao = models.URLField(max_length=255, blank=True, null=True, verbose_name="Link do ÃârgÃÂ£o") 
     validade = models.DateField(verbose_name="Validade") 
     arquivo_pdf = models.FileField(upload_to='farmaco/certificados_pdf/', verbose_name="Upload de Certificado PDF") 
-    descricao = models.TextField(blank=True, null=True, verbose_name="Descrição") 
+    descricao = models.TextField(blank=True, null=True, verbose_name="DescriÃÂ§ÃÂ£o") 
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="certificados_farmaco_cadastrados")
 
     class Meta:
         ordering = ['validade']
-        verbose_name = "Certificado Fármaco"
-        verbose_name_plural = "Certificados Fármaco"
+        verbose_name = "Certificado FÃÂ¡rmaco"
+        verbose_name_plural = "Certificados FÃÂ¡rmaco"
 
     def __str__(self):
         return self.certificado
@@ -360,8 +360,8 @@ class AgendaFarmaco(models.Model):
 
     class Meta:
         ordering = ['data_evento', 'hora_evento']
-        verbose_name = "Evento da Agenda Fármaco"
-        verbose_name_plural = "Eventos da Agenda Fármaco"
+        verbose_name = "Evento da Agenda FÃÂ¡rmaco"
+        verbose_name_plural = "Eventos da Agenda FÃÂ¡rmaco"
 
     def __str__(self):
         return f"[{self.get_tipo_display()}] {self.assunto} em {self.data_evento}"
@@ -380,8 +380,8 @@ class FarmacoTarefa(models.Model):
     
     class Meta:
         ordering = ['-criado_em']
-        verbose_name = "Tarefa de Fármaco"
-        verbose_name_plural = "Tarefas de Fármaco"
+        verbose_name = "Tarefa de FÃÂ¡rmaco"
+        verbose_name_plural = "Tarefas de FÃÂ¡rmaco"
 
     def __str__(self):
         return self.titulo
@@ -394,30 +394,39 @@ class FarmacoHistoricoTarefa(models.Model):
     
     class Meta:
         ordering = ['timestamp']
-        verbose_name = "Histórico de Tarefa de Fármaco"
-        verbose_name_plural = "Históricos de Tarefas de Fármaco"
+        verbose_name = "HistÃÂ³rico de Tarefa de FÃÂ¡rmaco"
+        verbose_name_plural = "HistÃÂ³ricos de Tarefas de FÃÂ¡rmaco"
 
     def __str__(self):
-        return f"[Fármaco] {self.tarefa.titulo} - {self.timestamp.strftime('%d/%m/%Y %H:%M')}"
+        return f"[FÃÂ¡rmaco] {self.tarefa.titulo} - {self.timestamp.strftime('%d/%m/%Y %H:%M')}"
 
 # ===================================================================
-#           MODELO PROXY PARA PERMISSÕES DE ANEXOS
+#           MODELO PROXY PARA PERMISSÃâ¢ES DE ANEXOS
 # ===================================================================
-class ModuleAttachmentPermissions(models.Model):
-    """Modelo proxy para criar permissões customizadas de visualização de anexos"""
+class ModulePermissions(models.Model):
+    """Modelo proxy para criar permissÃÂµes customizadas de mÃÂ³dulos e anexos"""
     
     class Meta:
-        managed = False  # Não cria tabela no banco
-        default_permissions = ()  # Não cria permissões padrão
+        managed = False  # NÃÂ£o cria tabela no banco
+        default_permissions = ()  # NÃÂ£o cria permissÃÂµes padrÃÂ£o
         permissions = (
-            # GR - Anexos
+            # GR - MÃÂ³dulo e Anexos
+            ('view_gr_module', 'Pode visualizar mÃÂ³dulo GR'),
             ('view_gr_attachments', 'Pode visualizar anexos do GR (PGRs, Rotogramas)'),
-            # Security - Anexos
-            ('view_security_attachments', 'Pode visualizar anexos do Security (Apólices, Certificados)'),
-            # QSMS - Anexos
+            # Security - MÃÂ³dulo e Anexos
+            ('view_security_module', 'Pode visualizar mÃÂ³dulo Security'),
+            ('view_security_attachments', 'Pode visualizar anexos do Security (ApÃÂ³lices, Certificados)'),
+            # QSMS - MÃÂ³dulo e Anexos
+            ('view_qsms_module', 'Pode visualizar mÃÂ³dulo QSMS'),
             ('view_qsms_attachments', 'Pode visualizar anexos do QSMS (Certificados)'),
-            # Fármaco - Anexos
-            ('view_farmaco_attachments', 'Pode visualizar anexos do Fármaco (Certificados)'),
+            # FÃÂ¡rmaco - MÃÂ³dulo e Anexos
+            ('view_farmaco_module', 'Pode visualizar mÃÂ³dulo FÃÂ¡rmaco'),
+            ('view_farmaco_attachments', 'Pode visualizar anexos do FÃÂ¡rmaco (Certificados)'),
+            # Arquivos Diversos - MÃÂ³dulo
+            ('view_arquivosdiversos_module', 'Pode visualizar mÃÂ³dulo Arquivos Diversos'),
+            ('view_all_arquivodiverso', 'Pode visualizar todos os arquivos diversos'),
         )
-        verbose_name = "Permissão de Anexo"
-        verbose_name_plural = "Permissões de Anexos"
+        verbose_name = "PermissÃÂ£o de MÃÂ³dulo"
+        verbose_name_plural = "PermissÃÂµes de MÃÂ³dulos"
+
+
