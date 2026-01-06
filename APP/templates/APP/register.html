@@ -1,0 +1,95 @@
+{% extends 'APP/base.html' %}
+
+{% block title %}Cadastrar Novo Usuário - Transbirday{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Centraliza o formulário na tela */
+    html, body {
+        height: 100%;
+    }
+    body {
+        display: flex;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+    }
+    /* Sobrescreve o padding-top do 'main' do base.html */
+    main {
+        padding-top: 0 !important;
+        width: 100%;
+    }
+    .form-register {
+        max-width: 500px; /* Um pouco mais largo para o formulário de cadastro */
+        margin: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-register">
+    <div class="card shadow-sm">
+        <div class="card-body p-4 p-md-5">
+            <h3 class="card-title text-center mb-4">
+                Cadastrar Novo Usuário
+            </h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    <strong>Erro ao cadastrar:</strong>
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ field }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
+                    {{ form.username }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                    {{ form.email }}
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="form-check mb-2">
+                    {{ form.is_staff }}
+                    <label class="form-check-label" for="{{ form.is_staff.id_for_label }}">
+                        {{ form.is_staff.label }} (Permite acesso ao Admin Django)
+                    </label>
+                </div>
+
+                <div class="form-check mb-3">
+                    {{ form.is_superuser }}
+                    <label class="form-check-label" for="{{ form.is_superuser.id_for_label }}">
+                        {{ form.is_superuser.label }} (Acesso total de Superusuário)
+                    </label>
+                </div>
+                
+                <div class="alert alert-info small">
+                    A senha padrão para novos usuários é: <strong>@Abcd1234</strong>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-primary btn-lg" type="submit">Cadastrar Usuário</button>
+                    <a href="{% url 'home' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+            </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
