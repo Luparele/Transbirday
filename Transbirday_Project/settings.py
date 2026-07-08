@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-m#d(g@i*^8y&p9v%#j_q@z_i$o3y_u%@=)b+0z@h1x7k(n^u_m'
 DEBUG = True
-ALLOWED_HOSTS = ['transbirday.pythonanywhere.com', 'www.transbirday.pythonanywhere.com']
+ALLOWED_HOSTS = ['transbirday.pythonanywhere.com', 'www.transbirday.pythonanywhere.com', '127.0.0.1', 'localhost']
 
 # Application definition
 INSTALLED_APPS = [

@@ -26,7 +26,8 @@ from .models import (
     QsmsTarefa, QsmsHistoricoTarefa,
     ArquivoDiverso, CertificadoFarmaco,
     AgendaFarmaco,
-    FarmacoTarefa, FarmacoHistoricoTarefa
+    FarmacoTarefa, FarmacoHistoricoTarefa,
+    DocumentacaoAgregado, AgregadoHistorico
 )
 
 # Importe os forms
@@ -43,12 +44,13 @@ from .forms import (
     QsmsTarefaForm, QsmsHistoricoTarefaForm,
     ArquivoDiversoForm, CertificadoFarmacoForm,
     AgendaFarmacoForm,
-    FarmacoTarefaForm, FarmacoHistoricoTarefaForm,
-    UserPermissionsForm, # Adicionado
+    FarmacoTarefaForm, FarmacoHistoricoTarefaForm, UserPermissionsForm,
+    DocumentacaoAgregadoForm, EditarDedetizacaoForm,
+    EditarLimpezaForm, NovoCRLVForm, EditarCondutorForm
 )
 
 # ===================================================================
-#    A view home NÃO precisa de login, mas as outras sim.
+#    A view home NÃO precisa de login, mas as outras sim.
 # ===================================================================
 def home_view(request):
     return render(request, 'APP/home.html')
@@ -460,7 +462,7 @@ def security_tarefa_adicionar_acao_view(request, pk):
         acao.save()
     return redirect('security_tarefa_list')
 
-# --- VIEWS DE SEGUROS, SINISTROS E VEÃCULOS ASSEGURADOS (COM @login_required) ---
+# --- VIEWS DE SEGUROS, SINISTROS E VEÍCULOS ASSEGURADOS (COM @login_required) ---
 
 @login_required
 @permission_required('APP.view_security_module', raise_exception=True)
@@ -613,7 +615,7 @@ def veiculo_assegurado_update_view(request, pk):
     form = VeiculoAsseguradoForm(request.POST, instance=veiculo)
     if form.is_valid():
         form.save()
-        messages.success(request, 'VeÃ­culo assegurado atualizado com sucesso!')
+        messages.success(request, 'Veículo assegurado atualizado com sucesso!')
     else:
         for field, errors in form.errors.items():
             for error in errors:
@@ -756,7 +758,7 @@ def agenda_qsms_edit_form_view(request, pk):
 def agenda_qsms_update_view(request, pk):
     evento = get_object_or_404(AgendaQSMS, pk=pk)
     if not (request.user == evento.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para editar este item.")
+        messages.error(request, "Você não tem permissão para editar este item.")
         return redirect('agenda_qsms_list')
 
     form = AgendaQSMSForm(request.POST, instance=evento)
@@ -774,12 +776,12 @@ def agenda_qsms_update_view(request, pk):
 def agenda_qsms_delete_view(request, pk):
     evento = get_object_or_404(AgendaQSMS, pk=pk)
     if not (request.user == evento.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para excluir este item.")
+        messages.error(request, "Você não tem permissão para excluir este item.")
         return redirect('agenda_qsms_list')
         
     tipo_display = evento.get_tipo_display()
     evento.delete()
-    messages.success(request, f"{tipo_display} excluÃ­do com sucesso.")
+    messages.success(request, f"{tipo_display} excluído com sucesso.")
     return redirect('agenda_qsms_list')
 
 
@@ -860,11 +862,11 @@ def qsms_tarefa_finalizar_view(request, pk):
 @permission_required('APP.view_qsms_module', raise_exception=True)
 def qsms_tarefa_detalhes_json(request, pk):
     # ===================================================================
-    #           INÃCIO DA CORREÃÃO (TYPO 40F -> 404)
+    #           INÍCIO DA CORREÇÃO (TYPO 40F -> 404)
     # ===================================================================
     tarefa = get_object_or_404(QsmsTarefa, pk=pk)
     # ===================================================================
-    #                         FIM DA CORREÃÃO
+    #                         FIM DA CORREÇÃO
     # ===================================================================
     historico = tarefa.historico.all().values('timestamp', 'acao', 'usuario__username')
     historico_list = [
@@ -904,7 +906,7 @@ def arquivo_diverso_list_view(request):
             messages.success(request, "Arquivo salvo com sucesso!")
             return redirect('arquivo_diverso_list')
     
-    # Se tiver permissÃ£o view_all, mostra todos os arquivos
+    # Se tiver permissão view_all, mostra todos os arquivos
     if request.user.has_perm('APP.view_all_arquivodiverso'):
         arquivos = ArquivoDiverso.objects.all().order_by('titulo')
     else:
@@ -959,7 +961,7 @@ def arquivo_diverso_delete_view(request, pk):
         arquivo = get_object_or_404(ArquivoDiverso, pk=pk, responsavel_cadastro=request.user)
     
     arquivo.delete()
-    messages.success(request, "Arquivo excluÃ­do com sucesso.")
+    messages.success(request, "Arquivo excluído com sucesso.")
     return redirect('arquivo_diverso_list')
 
 
@@ -974,12 +976,12 @@ def blacklist_list_view(request):
             condutor = form.save(commit=False)
             condutor.responsavel_cadastro = request.user
             condutor.save()
-            messages.success(request, "Condutor adicionado Ã  Blacklist com sucesso!")
+            messages.success(request, "Condutor adicionado à Blacklist com sucesso!")
             return redirect('blacklist_list')
         else:
             messages.error(request, f"Erro ao salvar: {form.errors.as_text()}")
 
-    # LÃ³gica de Busca
+    # Lógica de Busca
     query = request.GET.get('q')
     if query:
         condutores = CondutorBlacklist.objects.filter(
@@ -1000,7 +1002,7 @@ def blacklist_list_view(request):
 def blacklist_update_view(request, pk):
     condutor = get_object_or_404(CondutorBlacklist, pk=pk)
     if not (request.user == condutor.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para editar este condutor.")
+        messages.error(request, "Você não tem permissão para editar este condutor.")
         return redirect('blacklist_list')
 
     form = CondutorBlacklistForm(request.POST, instance=condutor)
@@ -1031,7 +1033,7 @@ def blacklist_edit_form_view(request, pk):
 def blacklist_delete_view(request, pk):
     condutor = get_object_or_404(CondutorBlacklist, pk=pk)
     if not (request.user == condutor.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para excluir este condutor.")
+        messages.error(request, "Você não tem permissão para excluir este condutor.")
         return redirect('blacklist_list')
         
     condutor.delete()
@@ -1039,11 +1041,11 @@ def blacklist_delete_view(request, pk):
     return redirect('blacklist_list')
 
 
-# --- VIEWS DE AUTENTICAÃÃO ---
+# --- VIEWS DE AUTENTICAÇÃO ---
 
-# FunÃ§Ã£o auxiliar para verificar superuser (usada em mÃºltiplas views)
+# Função auxiliar para verificar superuser (usada em múltiplas views)
 def is_superuser(user):
-    """Verifica se o usuÃ¡rio Ã© superuser"""
+    """Verifica se o usuário é superuser"""
     return user.is_superuser
 
 class CustomLoginView(LoginView):
@@ -1056,18 +1058,18 @@ class CustomLoginView(LoginView):
 def custom_logout_view(request):
     """View de logout."""
     logout(request)
-    messages.success(request, 'VocÃª saiu da sua conta com sucesso.')
+    messages.success(request, 'Você saiu da sua conta com sucesso.')
     return redirect('login') 
 
 class CustomPasswordChangeView(PasswordChangeView):
-    """View de alteraÃ§Ã£o de senha customizada."""
+    """View de alteração de senha customizada."""
     form_class = CustomPasswordChangeForm
     template_name = 'APP/password_change.html'
     success_url = reverse_lazy('password_change_done')
 
 @login_required
 def password_change_done_view(request):
-    """View de confirmaÃ§Ã£o de alteraÃ§Ã£o de senha."""
+    """View de confirmação de alteração de senha."""
     messages.success(request, 'Sua senha foi alterada com sucesso!')
     return redirect('home')
 
@@ -1183,7 +1185,7 @@ def agenda_farmaco_edit_form_view(request, pk):
 def agenda_farmaco_update_view(request, pk):
     evento = get_object_or_404(AgendaFarmaco, pk=pk)
     if not (request.user == evento.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para editar este item.")
+        messages.error(request, "Você não tem permissão para editar este item.")
         return redirect('agenda_farmaco_list')
 
     form = AgendaFarmacoForm(request.POST, instance=evento)
@@ -1200,12 +1202,12 @@ def agenda_farmaco_update_view(request, pk):
 def agenda_farmaco_delete_view(request, pk):
     evento = get_object_or_404(AgendaFarmaco, pk=pk)
     if not (request.user == evento.responsavel_cadastro or request.user.is_staff):
-        messages.error(request, "VocÃª nÃ£o tem permissÃ£o para excluir este item.")
+        messages.error(request, "Você não tem permissão para excluir este item.")
         return redirect('agenda_farmaco_list')
         
     tipo_display = evento.get_tipo_display()
     evento.delete()
-    messages.success(request, f"{tipo_display} excluÃ­do com sucesso.")
+    messages.success(request, f"{tipo_display} excluído com sucesso.")
     return redirect('agenda_farmaco_list')
 
 @login_required
@@ -1227,7 +1229,7 @@ def farmaco_tarefa_kanban_view(request):
         'form_tarefa': FarmacoTarefaForm(),
         'form_acao': FarmacoHistoricoTarefaForm(),
         'limite_finalizadas': limite_finalizadas + 10,
-        'titulo_pagina': 'FÃ¡rmaco - Tarefas',
+        'titulo_pagina': 'Fármaco - Tarefas',
     }
     return render(request, 'APP/tarefa_kanban_farmaco.html', context)
 
@@ -1308,31 +1310,31 @@ def farmaco_tarefa_adicionar_acao_view(request, pk):
     return redirect('farmaco_tarefa_list')
 
 # ===================================================================
-#           VIEWS DE GERENCIAMENTO DE USUÃRIOS E PERMISSÃES
+#           VIEWS DE GERENCIAMENTO DE USUÁRIOS E PERMISSÕES
 # ===================================================================
 
 @user_passes_test(is_superuser)
 def manage_users_list(request):
-    """Lista todos os usuÃ¡rios do sistema"""
+    """Lista todos os usuários do sistema"""
     users = User.objects.all().order_by('username')
     context = {'users': users}
     return render(request, 'APP/manage_users_list.html', context)
 
 @user_passes_test(is_superuser)
 def manage_user_permissions(request, user_id=None):
-    """Criar ou editar usuÃ¡rio com permissÃµes"""
+    """Criar ou editar usuário com permissões"""
     if user_id:
         user = get_object_or_404(User, pk=user_id)
-        form_title = f"Editar UsuÃ¡rio: {user.username}"
+        form_title = f"Editar Usuário: {user.username}"
     else:
         user = None
-        form_title = "Criar Novo UsuÃ¡rio"
+        form_title = "Criar Novo Usuário"
     
     if request.method == 'POST':
         form = UserPermissionsForm(request.POST, instance=user)
         if form.is_valid():
             new_user = form.save()
-            messages.success(request, f'UsuÃ¡rio {new_user.username} salvo com sucesso!')
+            messages.success(request, f'Usuário {new_user.username} salvo com sucesso!')
             return redirect('manage_users_list')
     else:
         form = UserPermissionsForm(instance=user)
@@ -1347,16 +1349,16 @@ def manage_user_permissions(request, user_id=None):
 @user_passes_test(is_superuser)
 @require_POST
 def delete_user(request, user_id):
-    """Excluir usuÃ¡rio"""
+    """Excluir usuário"""
     user = get_object_or_404(User, pk=user_id)
     if user == request.user:
-        messages.error(request, 'VocÃª nÃ£o pode excluir seu prÃ³prio usuÃ¡rio!')
+        messages.error(request, 'Você não pode excluir seu próprio usuário!')
     elif user.is_superuser:
-        messages.error(request, 'NÃ£o Ã© possÃ­vel excluir um superusuÃ¡rio!')
+        messages.error(request, 'Não é possível excluir um superusuário!')
     else:
         username = user.username
         user.delete()
-        messages.success(request, f'UsuÃ¡rio {username} excluÃ­do com sucesso!')
+        messages.success(request, f'Usuário {username} excluído com sucesso!')
     return redirect('manage_users_list')
 
 # ===================================================================
@@ -1369,84 +1371,255 @@ from django.conf import settings
 
 @login_required
 def serve_pgr_file(request, pk):
-    """Serve arquivo PDF do PGR com permissÃ£o"""
-    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
+    """Serve arquivo PDF do PGR com permissão"""
+    # Verifica permissão do módulo OU permissão específica de anexos
     if not (request.user.has_perm('APP.view_gr_module') or request.user.has_perm('APP.view_gr_attachments')):
-        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
+        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
     
     pgr = get_object_or_404(PGR, pk=pk)
     if pgr.arquivo_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(pgr.arquivo_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo nÃ£o encontrado")
+    raise Http404("Arquivo não encontrado")
 
 @login_required
 def serve_rotograma_file(request, pk):
-    """Serve arquivo PDF do Rotograma com permissÃ£o"""
-    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
+    """Serve arquivo PDF do Rotograma com permissão"""
+    # Verifica permissão do módulo OU permissão específica de anexos
     if not (request.user.has_perm('APP.view_gr_module') or request.user.has_perm('APP.view_gr_attachments')):
-        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
+        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
     
     rotograma = get_object_or_404(Rotograma, pk=pk)
     if rotograma.arquivo_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(rotograma.arquivo_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo nÃ£o encontrado")
+    raise Http404("Arquivo não encontrado")
 
 @login_required
 def serve_seguro_apolice_file(request, pk):
-    """Serve arquivo de apÃ³lice do Seguro com permissÃ£o"""
-    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
+    """Serve arquivo de apólice do Seguro com permissão"""
+    # Verifica permissão do módulo OU permissão específica de anexos
     if not (request.user.has_perm('APP.view_security_module') or request.user.has_perm('APP.view_security_attachments')):
-        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
+        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
     
     seguro = get_object_or_404(Seguro, pk=pk)
     if seguro.apolice_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(seguro.apolice_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo nÃ£o encontrado")
+    raise Http404("Arquivo não encontrado")
 
 @login_required
 def serve_seguro_certificado_file(request, pk):
-    """Serve arquivo de certificado do Seguro com permissÃ£o"""
-    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
+    """Serve arquivo de certificado do Seguro com permissão"""
+    # Verifica permissão do módulo OU permissão específica de anexos
     if not (request.user.has_perm('APP.view_security_module') or request.user.has_perm('APP.view_security_attachments')):
-        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
+        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
     
     seguro = get_object_or_404(Seguro, pk=pk)
     if seguro.certificado_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(seguro.certificado_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo nÃ£o encontrado")
+    raise Http404("Arquivo não encontrado")
 
 @login_required
 def serve_certificado_qsms_file(request, pk):
-    """Serve arquivo PDF do Certificado QSMS com permissÃ£o"""
-    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
+    """Serve arquivo PDF do Certificado QSMS com permissão"""
+    # Verifica permissão do módulo OU permissão específica de anexos
     if not (request.user.has_perm('APP.view_qsms_module') or request.user.has_perm('APP.view_qsms_attachments')):
-        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
+        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
     
     certificado = get_object_or_404(CertificadoQSMS, pk=pk)
     if certificado.arquivo_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(certificado.arquivo_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo nÃ£o encontrado")
+    raise Http404("Arquivo não encontrado")
 
 @login_required
 def serve_certificado_farmaco_file(request, pk):
-    """Serve arquivo PDF do Certificado FÃ¡rmaco com permissÃ£o"""
-    # Verifica permissÃ£o do mÃ³dulo OU permissÃ£o especÃ­fica de anexos
+    """Serve arquivo PDF do Certificado Fármaco com permissão"""
+    # Verifica permissão do módulo OU permissão específica de anexos
     if not (request.user.has_perm('APP.view_farmaco_module') or request.user.has_perm('APP.view_farmaco_attachments')):
-        raise PermissionDenied("VocÃª nÃ£o tem permissÃ£o para visualizar este anexo")
+        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
     
     certificado = get_object_or_404(CertificadoFarmaco, pk=pk)
     if certificado.arquivo_pdf:
         file_path = os.path.join(settings.MEDIA_ROOT, str(certificado.arquivo_pdf))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-    raise Http404("Arquivo nÃ£o encontrado")
+    raise Http404("Arquivo não encontrado")
+
+# ===================================================================
+#           DOCUMENTAÇÃO DE AGREGADOS (QSMS)
+# ===================================================================
+@login_required
+@permission_required('APP.view_agregados_module', raise_exception=True)
+def agregados_list_view(request):
+    agregados = DocumentacaoAgregado.objects.all()
+    if request.method == 'POST':
+        if not request.user.has_perm('APP.add_documentacaoagregado'):
+            raise PermissionDenied("Você não tem permissão para adicionar agregado.")
+        form = DocumentacaoAgregadoForm(request.POST, request.FILES)
+        if form.is_valid():
+            agregado = form.save(commit=False)
+            agregado.responsavel_cadastro = request.user
+            agregado.save()
+            AgregadoHistorico.objects.create(agregado=agregado, usuario=request.user, acao='Veículo cadastrado')
+            messages.success(request, 'Agregado cadastrado com sucesso!')
+            return redirect('agregados_list')
+        else:
+            messages.error(request, 'Erro ao cadastrar agregado. Verifique os dados.')
+    else:
+        form = DocumentacaoAgregadoForm()
+
+    return render(request, 'APP/qsms_agregados_list.html', {
+        'agregados': agregados,
+        'form_novo': form,
+    })
+
+@login_required
+@permission_required('APP.change_documentacaoagregado', raise_exception=True)
+def agregados_edit_dedetizacao_view(request, pk):
+    agregado = get_object_or_404(DocumentacaoAgregado, pk=pk)
+    if request.method == 'POST':
+        old_val = agregado.dedetizacao_validade
+        form = EditarDedetizacaoForm(request.POST, request.FILES, instance=agregado)
+        if form.is_valid():
+            agregado_salvo = form.save()
+            new_val = agregado_salvo.dedetizacao_validade
+            msg = []
+            if old_val != new_val:
+                old_str = old_val.strftime('%d/%m/%Y') if old_val else 'Vazio'
+                new_str = new_val.strftime('%d/%m/%Y') if new_val else 'Vazio'
+                msg.append(f'Validade alterada de {old_str} para {new_str}')
+            if 'dedetizacao_pdf' in request.FILES:
+                msg.append('Anexo PDF atualizado')
+            acao = " e ".join(msg) if msg else 'Dedetização salva sem alterações visíveis'
+            AgregadoHistorico.objects.create(agregado=agregado_salvo, usuario=request.user, acao=f'Dedetização: {acao}')
+            messages.success(request, 'Dedetização atualizada com sucesso!')
+            return redirect('agregados_list')
+    else:
+        form = EditarDedetizacaoForm(instance=agregado)
+    return render(request, 'APP/partials/edit_agregado_form.html', {'form': form, 'agregado': agregado, 'action_url': reverse_lazy('agregados_edit_dedetizacao', kwargs={'pk': pk})})
+
+@login_required
+@permission_required('APP.change_documentacaoagregado', raise_exception=True)
+def agregados_edit_limpeza_view(request, pk):
+    agregado = get_object_or_404(DocumentacaoAgregado, pk=pk)
+    if request.method == 'POST':
+        old_val = agregado.limpeza_validade
+        form = EditarLimpezaForm(request.POST, request.FILES, instance=agregado)
+        if form.is_valid():
+            agregado_salvo = form.save()
+            new_val = agregado_salvo.limpeza_validade
+            msg = []
+            if old_val != new_val:
+                old_str = old_val.strftime('%d/%m/%Y') if old_val else 'Vazio'
+                new_str = new_val.strftime('%d/%m/%Y') if new_val else 'Vazio'
+                msg.append(f'Validade alterada de {old_str} para {new_str}')
+            if 'limpeza_pdf' in request.FILES:
+                msg.append('Anexo PDF atualizado')
+            acao = " e ".join(msg) if msg else 'Limpeza salva sem alterações visíveis'
+            AgregadoHistorico.objects.create(agregado=agregado_salvo, usuario=request.user, acao=f'Limpeza: {acao}')
+            messages.success(request, 'Limpeza atualizada com sucesso!')
+            return redirect('agregados_list')
+    else:
+        form = EditarLimpezaForm(instance=agregado)
+    return render(request, 'APP/partials/edit_agregado_form.html', {'form': form, 'agregado': agregado, 'action_url': reverse_lazy('agregados_edit_limpeza', kwargs={'pk': pk})})
+
+@login_required
+@permission_required('APP.change_documentacaoagregado', raise_exception=True)
+def agregados_edit_crlv_view(request, pk):
+    agregado = get_object_or_404(DocumentacaoAgregado, pk=pk)
+    if request.method == 'POST':
+        old_ano = agregado.crlv_ano
+        form = NovoCRLVForm(request.POST, request.FILES, instance=agregado)
+        if form.is_valid():
+            agregado_salvo = form.save()
+            new_ano = agregado_salvo.crlv_ano
+            msg = []
+            if old_ano != new_ano:
+                msg.append(f'Ano alterado de {old_ano} para {new_ano}')
+            if 'crlv_pdf' in request.FILES:
+                msg.append('Anexo PDF atualizado')
+            acao = " e ".join(msg) if msg else 'CRLV salvo sem alterações visíveis'
+            AgregadoHistorico.objects.create(agregado=agregado_salvo, usuario=request.user, acao=f'CRLV: {acao}')
+            messages.success(request, 'CRLV atualizado com sucesso!')
+            return redirect('agregados_list')
+    else:
+        form = NovoCRLVForm(instance=agregado)
+    return render(request, 'APP/partials/edit_agregado_form.html', {'form': form, 'agregado': agregado, 'action_url': reverse_lazy('agregados_edit_crlv', kwargs={'pk': pk})})
+
+@login_required
+@permission_required('APP.change_documentacaoagregado', raise_exception=True)
+def agregados_edit_condutor_view(request, pk):
+    agregado = get_object_or_404(DocumentacaoAgregado, pk=pk)
+    if request.method == 'POST':
+        old_val = agregado.condutor
+        form = EditarCondutorForm(request.POST, instance=agregado)
+        if form.is_valid():
+            agregado_salvo = form.save()
+            new_val = agregado_salvo.condutor
+            if old_val != new_val:
+                AgregadoHistorico.objects.create(agregado=agregado_salvo, usuario=request.user, acao=f'Condutor alterado de "{old_val}" para "{new_val}"')
+            messages.success(request, 'Condutor atualizado com sucesso!')
+            return redirect('agregados_list')
+    else:
+        form = EditarCondutorForm(instance=agregado)
+    return render(request, 'APP/partials/edit_agregado_form.html', {'form': form, 'agregado': agregado, 'action_url': reverse_lazy('agregados_edit_condutor', kwargs={'pk': pk})})
+
+@login_required
+@permission_required('APP.delete_documentacaoagregado', raise_exception=True)
+def agregados_delete_view(request, pk):
+    agregado = get_object_or_404(DocumentacaoAgregado, pk=pk)
+    if request.method == 'POST':
+        agregado.delete()
+        messages.success(request, 'Registro excluído com sucesso!')
+    return redirect('agregados_list')
+
+@login_required
+def serve_agregado_file(request, pk, tipo):
+    if not (request.user.has_perm('APP.view_agregados_module') or request.user.has_perm('APP.view_agregados_attachments')):
+        raise PermissionDenied("Você não tem permissão para visualizar este anexo")
+    
+    agregado = get_object_or_404(DocumentacaoAgregado, pk=pk)
+    campo_arquivo = None
+    
+    if tipo == 'crlv' and agregado.crlv_pdf:
+        campo_arquivo = agregado.crlv_pdf
+    elif tipo == 'dedetizacao' and agregado.dedetizacao_pdf:
+        campo_arquivo = agregado.dedetizacao_pdf
+    elif tipo == 'limpeza' and agregado.limpeza_pdf:
+        campo_arquivo = agregado.limpeza_pdf
+        
+    if campo_arquivo:
+        file_path = os.path.join(settings.MEDIA_ROOT, str(campo_arquivo))
+        if os.path.exists(file_path):
+            from django.http import FileResponse
+            return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
+            
+    raise Http404("Arquivo não encontrado")
+
+@login_required
+@permission_required('APP.view_agregados_module', raise_exception=True)
+def agregados_historico_view(request, pk):
+    agregado = get_object_or_404(DocumentacaoAgregado, pk=pk)
+    historico = agregado.historico.all()
+    return render(request, 'APP/partials/agregado_historico.html', {'agregado': agregado, 'historico': historico})
+
+@login_required
+@permission_required('APP.view_agregados_module', raise_exception=True)
+def agregados_print_view(request, pk):
+    agregado = get_object_or_404(DocumentacaoAgregado, pk=pk)
+    return render(request, 'APP/print_agregado.html', {'agregado': agregado})
+
+@login_required
+@permission_required('APP.view_agregados_module', raise_exception=True)
+def agregados_print_historico_view(request, pk):
+    agregado = get_object_or_404(DocumentacaoAgregado, pk=pk)
+    historico = agregado.historico.all()
+    return render(request, 'APP/print_agregado_historico.html', {'agregado': agregado, 'historico': historico})

@@ -1,0 +1,238 @@
+{% extends 'APP/base.html' %}
+
+{% block title %}Documentação de Agregados - QSMS{% endblock %}
+
+{% block extra_head %}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>QSMS - Documentação de Agregados e Terceiros</h2>
+        {% if perms.APP.add_documentacaoagregado %}
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dynamicModal" id="btnNovoAgregado">
+            + Adicionar Novo Agregado
+        </button>
+        {% endif %}
+    </div>
+
+    <div class="list-group" id="agregadoAccordion">
+        {% for agregado in agregados %}
+        <div class="mb-3 rounded overflow-hidden">
+            <a href="#agregado-details-{{ agregado.id }}" class="list-group-item list-group-item-action {{ agregado.bg_color }}" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="agregado-details-{{ agregado.id }}">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Placa: {{ agregado.placa }}</h5>
+                    <small>Alertas: <strong>{{ agregado.status_details.alertas_resumo }}</strong> | Condutor: {{ agregado.condutor }}</small>
+                </div>
+            </a>
+            <div class="collapse" id="agregado-details-{{ agregado.id }}" data-bs-parent="#agregadoAccordion">
+                <div class="card card-body" style="border-top: none; border-radius: 0;">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <strong>Condutor Atual:</strong> {{ agregado.condutor }}
+                            {% if perms.APP.change_documentacaoagregado %}
+                            <button class="btn btn-outline-secondary btn-sm ms-2 edit-action-btn" data-url="{% url 'agregados_edit_condutor' agregado.id %}" data-title="Atualizar Condutor">Editar Condutor</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <!-- CRLV -->
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3 border rounded h-100 {{ agregado.status_details.crlv.cor }}">
+                                <h6>Licenciamento (CRLV)</h6>
+                                <p class="mb-1">Ano em Exercício: <strong>{{ agregado.crlv_ano }}</strong></p>
+                                <div class="mt-2">
+                                    {% if agregado.crlv_pdf %}
+                                        {% if perms.APP.view_agregados_attachments %}
+                                            <a href="{% url 'serve_agregado_file' agregado.pk 'crlv' %}" target="_blank" class="btn btn-info btn-sm mb-1">Ver PDF</a>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if perms.APP.change_documentacaoagregado %}
+                                        <button class="btn btn-secondary btn-sm mb-1 edit-action-btn" data-url="{% url 'agregados_edit_crlv' agregado.id %}" data-title="Atualizar CRLV">Editar</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dedetização -->
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3 border rounded h-100 {{ agregado.status_details.dedetizacao.cor }}">
+                                <h6>Dedetização Trimestral</h6>
+                                {% if agregado.dedetizacao_validade %}
+                                    <p class="mb-1">Validade: <strong>{{ agregado.dedetizacao_validade|date:"d/m/Y" }}</strong></p>
+                                {% else %}
+                                    <p class="mb-1 text-muted">Não informada</p>
+                                {% endif %}
+                                <div class="mt-2">
+                                    {% if agregado.dedetizacao_pdf %}
+                                        {% if perms.APP.view_agregados_attachments %}
+                                            <a href="{% url 'serve_agregado_file' agregado.pk 'dedetizacao' %}" target="_blank" class="btn btn-info btn-sm mb-1">Ver PDF</a>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if perms.APP.change_documentacaoagregado %}
+                                        <button class="btn btn-secondary btn-sm mb-1 edit-action-btn" data-url="{% url 'agregados_edit_dedetizacao' agregado.id %}" data-title="Atualizar Dedetização">Editar</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Limpeza -->
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3 border rounded h-100 {{ agregado.status_details.limpeza.cor }}">
+                                <h6>Limpeza Semanal</h6>
+                                {% if agregado.limpeza_validade %}
+                                    <p class="mb-1">Validade: <strong>{{ agregado.limpeza_validade|date:"d/m/Y" }}</strong></p>
+                                {% else %}
+                                    <p class="mb-1 text-muted">Não informada</p>
+                                {% endif %}
+                                <div class="mt-2">
+                                    {% if agregado.limpeza_pdf %}
+                                        {% if perms.APP.view_agregados_attachments %}
+                                            <a href="{% url 'serve_agregado_file' agregado.pk 'limpeza' %}" target="_blank" class="btn btn-info btn-sm mb-1">Ver PDF</a>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if perms.APP.change_documentacaoagregado %}
+                                        <button class="btn btn-secondary btn-sm mb-1 edit-action-btn" data-url="{% url 'agregados_edit_limpeza' agregado.id %}" data-title="Atualizar Limpeza">Editar</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    <div class="text-end">
+                        {% if perms.APP.view_agregados_module %}
+                        <button class="btn btn-secondary btn-sm edit-action-btn" data-url="{% url 'agregados_historico' agregado.id %}" data-title="Histórico - {{ agregado.placa }}">
+                            <i class="bi bi-clock-history"></i> Visualizar Histórico
+                        </button>
+                        <a href="{% url 'agregados_print_historico' agregado.id %}" target="_blank" class="btn btn-info btn-sm text-white">
+                            <i class="bi bi-printer"></i> Imprimir Histórico
+                        </a>
+                        <a href="{% url 'agregados_print' agregado.id %}" target="_blank" class="btn btn-primary btn-sm">
+                            <i class="bi bi-file-earmark-pdf"></i> Imprimir Ficha
+                        </a>
+                        {% endif %}
+                        {% if perms.APP.delete_documentacaoagregado %}
+                        <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-id="{{ agregado.id }}"
+                                data-nome="{{ agregado.placa }}">
+                            Excluir Veículo
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info" role="alert">
+            Nenhum veículo agregado cadastrado.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal Dinâmico para Edição/Criação -->
+<div class="modal fade" id="dynamicModal" tabindex="-1" aria-labelledby="dynamicModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="dynamicModalLabel">Adicionar Agregado</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="dynamicModalBody">
+                <!-- Conteúdo injetado via JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template do Form de Criação -->
+<div id="create-form-template" class="d-none">
+    <form id="agregadoForm" action="{% url 'agregados_list' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form_novo.as_p }}
+        <div class="modal-footer mt-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            <button type="submit" class="btn btn-primary">Salvar Agregado</button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal Exclusão -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Confirmar Exclusão</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o veículo de placa <strong id="deleteTargetName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    const dynamicModal = new bootstrap.Modal(document.getElementById('dynamicModal'));
+    const dynamicModalLabel = $('#dynamicModalLabel');
+    const dynamicModalBody = $('#dynamicModalBody');
+
+    // Novo Agregado
+    $('#btnNovoAgregado').on('click', function() {
+        dynamicModalLabel.text('Adicionar Novo Agregado');
+        const createFormHtml = $('#create-form-template').html();
+        dynamicModalBody.html(createFormHtml);
+    });
+
+    // Edições parciais via botões
+    $('.edit-action-btn').on('click', function(e) {
+        e.preventDefault();
+        const url = $(this).data('url');
+        const title = $(this).data('title');
+        
+        if (title.includes('Histórico')) {
+            $('#dynamicModal .modal-dialog').addClass('modal-lg');
+            $('#dynamicModal .modal-dialog').css({'max-width': '95%'});
+        } else {
+            $('#dynamicModal .modal-dialog').removeClass('modal-lg');
+            $('#dynamicModal .modal-dialog').css({'max-width': ''});
+        }
+        
+        dynamicModalLabel.text(title);
+        dynamicModalBody.html('<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p>Carregando...</p></div>');
+        dynamicModal.show();
+        
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                dynamicModalBody.html(html);
+            })
+            .catch(err => {
+                dynamicModalBody.html('<p class="text-danger">Erro ao carregar o formulário.</p>');
+            });
+    });
+
+    // Exclusão
+    $('.delete-btn').on('click', function() {
+        const id = $(this).data('id');
+        const nome = $(this).data('nome');
+        $('#deleteTargetName').text(nome);
+        $('#deleteForm').attr('action', `/qsms/agregados/${id}/delete/`);
+    });
+});
+</script>
+{% endblock %}

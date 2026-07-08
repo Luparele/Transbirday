@@ -14,32 +14,32 @@ class Migration(migrations.Migration):
             name="agendafarmaco",
             options={
                 "ordering": ["data_evento", "hora_evento"],
-                "verbose_name": "Evento da Agenda FÃ\x83Â¡rmaco",
-                "verbose_name_plural": "Eventos da Agenda FÃ\x83Â¡rmaco",
+                "verbose_name": "Evento da Agenda FÃ\x83¡rmaco",
+                "verbose_name_plural": "Eventos da Agenda FÃ\x83¡rmaco",
             },
         ),
         migrations.AlterModelOptions(
             name="certificadofarmaco",
             options={
                 "ordering": ["validade"],
-                "verbose_name": "Certificado FÃ\x83Â¡rmaco",
-                "verbose_name_plural": "Certificados FÃ\x83Â¡rmaco",
+                "verbose_name": "Certificado FÃ\x83¡rmaco",
+                "verbose_name_plural": "Certificados FÃ\x83¡rmaco",
             },
         ),
         migrations.AlterModelOptions(
             name="farmacohistoricotarefa",
             options={
                 "ordering": ["timestamp"],
-                "verbose_name": "HistÃ\x83Â³rico de Tarefa de FÃ\x83Â¡rmaco",
-                "verbose_name_plural": "HistÃ\x83Â³ricos de Tarefas de FÃ\x83Â¡rmaco",
+                "verbose_name": "HistÃ\x83³rico de Tarefa de FÃ\x83¡rmaco",
+                "verbose_name_plural": "HistÃ\x83³ricos de Tarefas de FÃ\x83¡rmaco",
             },
         ),
         migrations.AlterModelOptions(
             name="farmacotarefa",
             options={
                 "ordering": ["-criado_em"],
-                "verbose_name": "Tarefa de FÃ\x83Â¡rmaco",
-                "verbose_name_plural": "Tarefas de FÃ\x83Â¡rmaco",
+                "verbose_name": "Tarefa de FÃ\x83¡rmaco",
+                "verbose_name_plural": "Tarefas de FÃ\x83¡rmaco",
             },
         ),
         migrations.AlterModelOptions(
@@ -48,63 +48,63 @@ class Migration(migrations.Migration):
                 "default_permissions": (),
                 "managed": False,
                 "permissions": (
-                    ("view_gr_module", "Pode visualizar mÃ\x83Â³dulo GR"),
+                    ("view_gr_module", "Pode visualizar mÃ\x83³dulo GR"),
                     (
                         "view_gr_attachments",
                         "Pode visualizar anexos do GR (PGRs, Rotogramas)",
                     ),
-                    ("view_security_module", "Pode visualizar mÃ\x83Â³dulo Security"),
+                    ("view_security_module", "Pode visualizar mÃ\x83³dulo Security"),
                     (
                         "view_security_attachments",
-                        "Pode visualizar anexos do Security (ApÃ\x83Â³lices, Certificados)",
+                        "Pode visualizar anexos do Security (ApÃ\x83³lices, Certificados)",
                     ),
-                    ("view_qsms_module", "Pode visualizar mÃ\x83Â³dulo QSMS"),
+                    ("view_qsms_module", "Pode visualizar mÃ\x83³dulo QSMS"),
                     (
                         "view_qsms_attachments",
                         "Pode visualizar anexos do QSMS (Certificados)",
                     ),
                     (
                         "view_farmaco_module",
-                        "Pode visualizar mÃ\x83Â³dulo FÃ\x83Â¡rmaco",
+                        "Pode visualizar mÃ\x83³dulo FÃ\x83¡rmaco",
                     ),
                     (
                         "view_farmaco_attachments",
-                        "Pode visualizar anexos do FÃ\x83Â¡rmaco (Certificados)",
+                        "Pode visualizar anexos do FÃ\x83¡rmaco (Certificados)",
                     ),
                     (
                         "view_arquivosdiversos_module",
-                        "Pode visualizar mÃ\x83Â³dulo Arquivos Diversos",
+                        "Pode visualizar mÃ\x83³dulo Arquivos Diversos",
                     ),
                     (
                         "view_all_arquivodiverso",
                         "Pode visualizar todos os arquivos diversos",
                     ),
                 ),
-                "verbose_name": "PermissÃ\x83Â£o de MÃ\x83Â³dulo",
-                "verbose_name_plural": "PermissÃ\x83Âµes de MÃ\x83Â³dulos",
+                "verbose_name": "PermissÃ\x83£o de MÃ\x83³dulo",
+                "verbose_name_plural": "PermissÃ\x83µes de MÃ\x83³dulos",
             },
         ),
         migrations.AlterModelOptions(
             name="qsmshistoricotarefa",
             options={
                 "ordering": ["timestamp"],
-                "verbose_name": "HistÃ\x83Â³rico de Tarefa de QSMS",
-                "verbose_name_plural": "HistÃ\x83Â³ricos de Tarefas de QSMS",
+                "verbose_name": "HistÃ\x83³rico de Tarefa de QSMS",
+                "verbose_name_plural": "HistÃ\x83³ricos de Tarefas de QSMS",
             },
         ),
         migrations.AlterModelOptions(
             name="securityhistoricotarefa",
             options={
                 "ordering": ["timestamp"],
-                "verbose_name": "HistÃ\x83Â³rico de Tarefa de Security",
-                "verbose_name_plural": "HistÃ\x83Â³ricos de Tarefas de Security",
+                "verbose_name": "HistÃ\x83³rico de Tarefa de Security",
+                "verbose_name_plural": "HistÃ\x83³ricos de Tarefas de Security",
             },
         ),
         migrations.AlterField(
             model_name="arquivodiverso",
             name="descricao",
             field=models.TextField(
-                blank=True, null=True, verbose_name="DescriÃ\x83Â§Ã\x83Â£o do Documento"
+                blank=True, null=True, verbose_name="DescriÃ\x83§Ã\x83£o do Documento"
             ),
         ),
         migrations.AlterField(
@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
             model_name="certificadofarmaco",
             name="descricao",
             field=models.TextField(
-                blank=True, null=True, verbose_name="DescriÃ\x83Â§Ã\x83Â£o"
+                blank=True, null=True, verbose_name="DescriÃ\x83§Ã\x83£o"
             ),
         ),
         migrations.AlterField(
@@ -126,21 +126,21 @@ class Migration(migrations.Migration):
                 blank=True,
                 max_length=255,
                 null=True,
-                verbose_name="Link do Ã\x83â\x80\x9crgÃ\x83Â£o",
+                verbose_name="Link do Ã\x83â\x80\x9crgÃ\x83£o",
             ),
         ),
         migrations.AlterField(
             model_name="certificadofarmaco",
             name="orgao_competente",
             field=models.CharField(
-                max_length=255, verbose_name="Ã\x83â\x80\x9crgÃ\x83Â£o Competente"
+                max_length=255, verbose_name="Ã\x83â\x80\x9crgÃ\x83£o Competente"
             ),
         ),
         migrations.AlterField(
             model_name="certificadoqsms",
             name="descricao",
             field=models.TextField(
-                blank=True, null=True, verbose_name="DescriÃ\x83Â§Ã\x83Â£o"
+                blank=True, null=True, verbose_name="DescriÃ\x83§Ã\x83£o"
             ),
         ),
         migrations.AlterField(
@@ -150,14 +150,14 @@ class Migration(migrations.Migration):
                 blank=True,
                 max_length=255,
                 null=True,
-                verbose_name="Link do Ã\x83â\x80\x9crgÃ\x83Â£o",
+                verbose_name="Link do Ã\x83â\x80\x9crgÃ\x83£o",
             ),
         ),
         migrations.AlterField(
             model_name="certificadoqsms",
             name="orgao_competente",
             field=models.CharField(
-                max_length=255, verbose_name="Ã\x83â\x80\x9crgÃ\x83Â£o Competente"
+                max_length=255, verbose_name="Ã\x83â\x80\x9crgÃ\x83£o Competente"
             ),
         ),
         migrations.AlterField(
@@ -173,19 +173,19 @@ class Migration(migrations.Migration):
             field=models.DateField(
                 blank=True,
                 null=True,
-                verbose_name="Data de AprovaÃ\x83Â§Ã\x83Â£o/RealizaÃ\x83Â§Ã\x83Â£o",
+                verbose_name="Data de AprovaÃ\x83§Ã\x83£o/RealizaÃ\x83§Ã\x83£o",
             ),
         ),
         migrations.AlterField(
             model_name="condutorblacklist",
             name="motivo_reprovacao",
-            field=models.TextField(verbose_name="Motivo da ReprovaÃ\x83Â§Ã\x83Â£o"),
+            field=models.TextField(verbose_name="Motivo da ReprovaÃ\x83§Ã\x83£o"),
         ),
         migrations.AlterField(
             model_name="pgr",
             name="tipo_seguro",
             field=models.CharField(
-                choices=[("PrÃ\x83Â³prio", "PrÃ\x83Â³prio"), ("DDR", "DDR")],
+                choices=[("PrÃ\x83³prio", "PrÃ\x83³prio"), ("DDR", "DDR")],
                 max_length=10,
                 verbose_name="Tipo de Seguro",
             ),
@@ -207,33 +207,33 @@ class Migration(migrations.Migration):
             name="apolice_pdf",
             field=models.FileField(
                 upload_to="seguros/apolices/",
-                verbose_name="Upload da ApÃ\x83Â³lice (PDF)",
+                verbose_name="Upload da ApÃ\x83³lice (PDF)",
             ),
         ),
         migrations.AlterField(
             model_name="seguro",
             name="descricao_resumo",
             field=models.TextField(
-                blank=True, null=True, verbose_name="DescriÃ\x83Â§Ã\x83Â£o/Resumo"
+                blank=True, null=True, verbose_name="DescriÃ\x83§Ã\x83£o/Resumo"
             ),
         ),
         migrations.AlterField(
             model_name="seguro",
             name="tipo_apolice",
             field=models.CharField(
-                max_length=100, verbose_name="Tipo de ApÃ\x83Â³lice"
+                max_length=100, verbose_name="Tipo de ApÃ\x83³lice"
             ),
         ),
         migrations.AlterField(
             model_name="seguro",
             name="vigencia",
-            field=models.DateField(verbose_name="VigÃ\x83Âªncia do Seguro"),
+            field=models.DateField(verbose_name="VigÃ\x83ªncia do Seguro"),
         ),
         migrations.AlterField(
             model_name="sinistro",
             name="seguradora_responsavel",
             field=models.CharField(
-                max_length=100, verbose_name="Seguradora ResponsÃ\x83Â¡vel"
+                max_length=100, verbose_name="Seguradora ResponsÃ\x83¡vel"
             ),
         ),
         migrations.AlterField(
@@ -250,18 +250,18 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="veiculoassegurado",
             name="ano_fabricacao",
-            field=models.IntegerField(verbose_name="Ano de FabricaÃ\x83Â§Ã\x83Â£o"),
+            field=models.IntegerField(verbose_name="Ano de FabricaÃ\x83§Ã\x83£o"),
         ),
         migrations.AlterField(
             model_name="veiculoassegurado",
             name="assistencia_km",
             field=models.IntegerField(
-                verbose_name="Reboque/AssistÃ\x83Âªncia 24h (KM)"
+                verbose_name="Reboque/AssistÃ\x83ªncia 24h (KM)"
             ),
         ),
         migrations.AlterField(
             model_name="veiculoassegurado",
             name="vigencia",
-            field=models.DateField(verbose_name="VigÃ\x83Âªncia"),
+            field=models.DateField(verbose_name="VigÃ\x83ªncia"),
         ),
     ]

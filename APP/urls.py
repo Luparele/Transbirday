@@ -109,6 +109,17 @@ urlpatterns = [
     path('arquivos-diversos/<int:pk>/edit-form/', views.arquivo_diverso_edit_form_view, name='arquivo_diverso_edit_form'),
     path('arquivos-diversos/<int:pk>/delete/', views.arquivo_diverso_delete_view, name='arquivo_diverso_delete'),
 
+    # --- ROTAS DE AGREGADOS (QSMS) ---
+    path('qsms/agregados/', views.agregados_list_view, name='agregados_list'),
+    path('qsms/agregados/<int:pk>/edit-dedetizacao/', views.agregados_edit_dedetizacao_view, name='agregados_edit_dedetizacao'),
+    path('qsms/agregados/<int:pk>/edit-limpeza/', views.agregados_edit_limpeza_view, name='agregados_edit_limpeza'),
+    path('qsms/agregados/<int:pk>/edit-crlv/', views.agregados_edit_crlv_view, name='agregados_edit_crlv'),
+    path('qsms/agregados/<int:pk>/edit-condutor/', views.agregados_edit_condutor_view, name='agregados_edit_condutor'),
+    path('qsms/agregados/<int:pk>/delete/', views.agregados_delete_view, name='agregados_delete'),
+    path('qsms/agregados/<int:pk>/historico/', views.agregados_historico_view, name='agregados_historico'),
+    path('qsms/agregados/<int:pk>/print/', views.agregados_print_view, name='agregados_print'),
+    path('qsms/agregados/<int:pk>/print-historico/', views.agregados_print_historico_view, name='agregados_print_historico'),
+
     # Fármaco - Certificados
     path('farmaco/certificados/', views.certificado_farmaco_list_view, name='certificado_farmaco_list'),
     path('farmaco/certificados/<int:pk>/edit-form/', views.certificado_farmaco_edit_form_view, name='certificado_farmaco_edit_form'),
@@ -144,4 +155,5 @@ urlpatterns = [
     path('seguros/<int:pk>/certificado/', views.serve_seguro_certificado_file, name='serve_seguro_certificado_file'),
     path('qsms/certificados/<int:pk>/arquivo/', views.serve_certificado_qsms_file, name='serve_certificado_qsms_file'),
     path('farmaco/certificados/<int:pk>/arquivo/', views.serve_certificado_farmaco_file, name='serve_certificado_farmaco_file'),
+    path('qsms/agregados/<int:pk>/arquivo/<str:tipo>/', views.serve_agregado_file, name='serve_agregado_file'),
 ]

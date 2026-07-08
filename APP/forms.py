@@ -11,6 +11,7 @@ from .models import (
     CertificadoFarmaco,
     AgendaFarmaco,
     FarmacoTarefa, FarmacoHistoricoTarefa,
+    DocumentacaoAgregado,
 )
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
@@ -65,7 +66,7 @@ class VeiculoForm(forms.ModelForm):
         }
 
 # ===================================================================
-#           INÃCIO DO NOVO FORMULÃRIO (BLACK LIST)
+#           INÍCIO DO NOVO FORMULÁRIO (BLACK LIST)
 # ===================================================================
 class CondutorBlacklistForm(forms.ModelForm):
     class Meta:
@@ -75,13 +76,13 @@ class CondutorBlacklistForm(forms.ModelForm):
             'nome_completo': forms.TextInput(attrs={'class': 'form-control'}),
             'cpf': forms.TextInput(attrs={
                 'class': 'form-control', 
-                'data-mask': '000.000.000-00' # MÃ¡scara para o JavaScript
+                'data-mask': '000.000.000-00' # Máscara para o JavaScript
             }),
             'data_pesquisa': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'motivo_reprovacao': CKEditorUploadingWidget(),
         }
 # ===================================================================
-#                         FIM DAS ADIÃÃES
+#                         FIM DAS ADIÇÕES
 # ===================================================================
 
 class ChecklistForm(forms.ModelForm):
@@ -125,10 +126,10 @@ class HistoricoTarefaForm(forms.ModelForm):
         model = HistoricoTarefa
         fields = ['acao']
         widgets = {
-            'acao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Adicionar um novo comentÃ¡rio ou aÃ§Ã£o...'}),
+            'acao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Adicionar um novo comentário ou ação...'}),
         }
         labels = {
-            'acao': 'Nova AÃ§Ã£o/ComentÃ¡rio'
+            'acao': 'Nova Ação/Comentário'
         }
 
 class SecurityTarefaForm(forms.ModelForm):
@@ -145,10 +146,10 @@ class SecurityHistoricoTarefaForm(forms.ModelForm):
         model = SecurityHistoricoTarefa
         fields = ['acao']
         widgets = {
-            'acao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Adicionar um novo comentÃ¡rio ou aÃ§Ã£o...'}),
+            'acao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Adicionar um novo comentário ou ação...'}),
         }
         labels = {
-            'acao': 'Nova AÃ§Ã£o/ComentÃ¡rio'
+            'acao': 'Nova Ação/Comentário'
         }
 
 class SeguroForm(forms.ModelForm):
@@ -251,10 +252,10 @@ class QsmsHistoricoTarefaForm(forms.ModelForm):
         model = QsmsHistoricoTarefa
         fields = ['acao']
         widgets = {
-            'acao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Adicionar um novo comentÃ¡rio ou aÃ§Ã£o...'}),
+            'acao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Adicionar um novo comentário ou ação...'}),
         }
         labels = {
-            'acao': 'Nova AÃ§Ã£o/ComentÃ¡rio'
+            'acao': 'Nova Ação/Comentário'
         }
 
 class ArquivoDiversoForm(forms.ModelForm):
@@ -269,16 +270,16 @@ class ArquivoDiversoForm(forms.ModelForm):
 
 
 # ===================================================================
-#           FORMULÃRIOS DE AUTENTICAÃÃO
+#           FORMULÁRIOS DE AUTENTICAÇÃO
 # ===================================================================
 
 class CustomAuthenticationForm(AuthenticationForm):
-    """FormulÃ¡rio de login customizado para Bootstrap."""
+    """Formulário de login customizado para Bootstrap."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget = forms.TextInput(attrs={
             'class': 'form-control', 
-            'placeholder': 'UsuÃ¡rio'
+            'placeholder': 'Usuário'
         })
         self.fields['password'].widget = forms.PasswordInput(attrs={
             'class': 'form-control',
@@ -286,10 +287,10 @@ class CustomAuthenticationForm(AuthenticationForm):
         })
 
 # ===================================================================
-#           FORMULÃRIO DE CRIAÃÃO DE USUÃRIO (ADMIN)
+#           FORMULÁRIO DE CRIAÇÃO DE USUÁRIO (ADMIN)
 # ===================================================================
 class AdminUserCreationForm(forms.ModelForm):
-    """FormulÃ¡rio para admin criar novos usuÃ¡rios com senha padrÃ£o."""
+    """Formulário para admin criar novos usuários com senha padrão."""
     class Meta:
         model = User
         fields = ['username', 'email', 'is_staff', 'is_superuser']
@@ -302,7 +303,7 @@ class AdminUserCreationForm(forms.ModelForm):
         self.fields['is_superuser'].widget.attrs.update({'class': 'form-check-input'})
 
 class CustomPasswordChangeForm(PasswordChangeForm):
-    """FormulÃ¡rio de alteraÃ§Ã£o de senha customizado para Bootstrap."""
+    """Formulário de alteração de senha customizado para Bootstrap."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['old_password'].widget = forms.PasswordInput(attrs={'class': 'form-control'})
@@ -310,7 +311,7 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         self.fields['new_password2'].widget = forms.PasswordInput(attrs={'class': 'form-control'})
 
 # ===================================================================
-#           FORMULÃRIOS DE FÃRMACO
+#           FORMULÁRIOS DE FÁRMACO
 # ===================================================================
 
 class CertificadoFarmacoForm(forms.ModelForm):
@@ -355,25 +356,25 @@ class FarmacoHistoricoTarefaForm(forms.ModelForm):
         model = FarmacoHistoricoTarefa
         fields = ['acao']
         widgets = {
-            'acao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Adicionar um novo comentÃ¡rio ou aÃ§Ã£o...'}),
+            'acao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Adicionar um novo comentário ou ação...'}),
         }
         labels = {
-            'acao': 'Nova AÃ§Ã£o/ComentÃ¡rio'
+            'acao': 'Nova Ação/Comentário'
         }
 
 # ===================================================================
-#           FORMULÃRIO DE GERENCIAMENTO DE PERMISSÃES
+#           FORMULÁRIO DE GERENCIAMENTO DE PERMISSÕES
 # ===================================================================
 
 class UserPermissionsForm(forms.ModelForm):
-    """FormulÃ¡rio para gerenciar usuÃ¡rio e permissÃµes"""
+    """Formulário para gerenciar usuário e permissões"""
     
-    # InformaÃ§Ãµes bÃ¡sicas
+    # Informações básicas
     password1 = forms.CharField(
         label='Senha', 
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         required=False,
-        help_text='Deixe em branco para manter a senha atual (ao editar) ou usar a senha padrÃ£o (ao criar)'
+        help_text='Deixe em branco para manter a senha atual (ao editar) ou usar a senha padrão (ao criar)'
     )
     password2 = forms.CharField(
         label='Confirmar Senha', 
@@ -382,7 +383,7 @@ class UserPermissionsForm(forms.ModelForm):
     )
     
     # GERENCIAMENTO DE RISCO
-    view_gr_module = forms.BooleanField(required=False, label="Visualizar mÃ³dulo")
+    view_gr_module = forms.BooleanField(required=False, label="Visualizar módulo")
     view_gr_attachments = forms.BooleanField(required=False, label="Visualizar anexos")
     add_pgr = forms.BooleanField(required=False, label="Adicionar")
     change_pgr = forms.BooleanField(required=False, label="Editar")
@@ -413,7 +414,7 @@ class UserPermissionsForm(forms.ModelForm):
     delete_condutorblacklist = forms.BooleanField(required=False, label="Excluir")
     
     # SECURITY
-    view_security_module = forms.BooleanField(required=False, label="Visualizar mÃ³dulo")
+    view_security_module = forms.BooleanField(required=False, label="Visualizar módulo")
     view_security_attachments = forms.BooleanField(required=False, label="Visualizar anexos")
     add_seguro = forms.BooleanField(required=False, label="Adicionar")
     change_seguro = forms.BooleanField(required=False, label="Editar")
@@ -432,7 +433,7 @@ class UserPermissionsForm(forms.ModelForm):
     delete_securitytarefa = forms.BooleanField(required=False, label="Excluir")
     
     # QSMS
-    view_qsms_module = forms.BooleanField(required=False, label="Visualizar mÃ³dulo")
+    view_qsms_module = forms.BooleanField(required=False, label="Visualizar módulo")
     view_qsms_attachments = forms.BooleanField(required=False, label="Visualizar anexos")
     add_certificadoqsms = forms.BooleanField(required=False, label="Adicionar")
     change_certificadoqsms = forms.BooleanField(required=False, label="Editar")
@@ -446,8 +447,8 @@ class UserPermissionsForm(forms.ModelForm):
     change_qsmstarefa = forms.BooleanField(required=False, label="Editar")
     delete_qsmstarefa = forms.BooleanField(required=False, label="Excluir")
     
-    # FÃRMACO
-    view_farmaco_module = forms.BooleanField(required=False, label="Visualizar mÃ³dulo")
+    # FÁRMACO
+    view_farmaco_module = forms.BooleanField(required=False, label="Visualizar módulo")
     view_farmaco_attachments = forms.BooleanField(required=False, label="Visualizar anexos")
     add_certificadofarmaco = forms.BooleanField(required=False, label="Adicionar")
     change_certificadofarmaco = forms.BooleanField(required=False, label="Editar")
@@ -462,7 +463,7 @@ class UserPermissionsForm(forms.ModelForm):
     delete_farmacotarefa = forms.BooleanField(required=False, label="Excluir")
     
     # ARQUIVOS DIVERSOS
-    view_arquivosdiversos_module = forms.BooleanField(required=False, label="Visualizar mÃ³dulo")
+    view_arquivosdiversos_module = forms.BooleanField(required=False, label="Visualizar módulo")
     view_all_arquivodiverso = forms.BooleanField(required=False, label="Visualizar todos")
     add_arquivodiverso = forms.BooleanField(required=False, label="Adicionar")
     change_arquivodiverso = forms.BooleanField(required=False, label="Editar")
@@ -480,22 +481,22 @@ class UserPermissionsForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
         labels = {
-            'username': 'Nome de UsuÃ¡rio',
+            'username': 'Nome de Usuário',
             'email': 'E-mail',
             'first_name': 'Nome',
             'last_name': 'Sobrenome',
-            'is_staff': 'Ã Administrador?',
-            'is_active': 'UsuÃ¡rio Ativo?',
+            'is_staff': 'É Administrador?',
+            'is_active': 'Usuário Ativo?',
         }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
-            # Carregar permissÃµes atuais do usuÃ¡rio
+            # Carregar permissões atuais do usuário
             user_permissions = self.instance.user_permissions.all()
             perm_codenames = [p.codename for p in user_permissions]
             
-            # Marcar checkboxes das permissÃµes que o usuÃ¡rio tem
+            # Marcar checkboxes das permissões que o usuário tem
             for field_name in self.fields:
                 if field_name in perm_codenames:
                     self.fields[field_name].initial = True
@@ -506,22 +507,22 @@ class UserPermissionsForm(forms.ModelForm):
         password2 = cleaned_data.get('password2')
         
         if password1 and password1 != password2:
-            raise forms.ValidationError('As senhas nÃ£o coincidem.')
+            raise forms.ValidationError('As senhas não coincidem.')
         
         return cleaned_data
     
     def save(self, commit=True):
         user = super().save(commit=False)
         
-        # Se Ã© novo usuÃ¡rio e nÃ£o forneceu senha, usar padrÃ£o
+        # Se é novo usuário e não forneceu senha, usar padrão
         if not self.instance.pk:
             password = self.cleaned_data.get('password1')
             if password:
                 user.set_password(password)
             else:
-                user.set_password('transbirday2025')  # Senha padrÃ£o
+                user.set_password('transbirday2025')  # Senha padrão
         else:
-            # Se estÃ¡ editando e forneceu nova senha
+            # Se está editando e forneceu nova senha
             password = self.cleaned_data.get('password1')
             if password:
                 user.set_password(password)
@@ -529,13 +530,13 @@ class UserPermissionsForm(forms.ModelForm):
         if commit:
             user.save()
             
-            # Limpar permissÃµes antigas
+            # Limpar permissões antigas
             user.user_permissions.clear()
             
-            # Lista de campos que nÃ£o sÃ£o permissÃµes
+            # Lista de campos que não são permissões
             non_perm_fields = ['username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'password1', 'password2']
             
-            # Adicionar novas permissÃµes
+            # Adicionar novas permissões
             for field_name in self.fields:
                 if field_name not in non_perm_fields and self.cleaned_data.get(field_name):
                     try:
@@ -545,3 +546,57 @@ class UserPermissionsForm(forms.ModelForm):
                         pass
         
         return user
+
+# ===================================================================
+#           FORMULÁRIOS DE DOCUMENTAÇÃO DE AGREGADOS E TERCEIROS
+# ===================================================================
+class DocumentacaoAgregadoForm(forms.ModelForm):
+    class Meta:
+        model = DocumentacaoAgregado
+        fields = ['placa', 'condutor', 'crlv_ano', 'crlv_pdf', 'dedetizacao_validade', 'dedetizacao_pdf', 'limpeza_validade', 'limpeza_pdf']
+        widgets = {
+            'placa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: ABC-1234 ou ABC1D23'}),
+            'condutor': forms.TextInput(attrs={'class': 'form-control'}),
+            'crlv_ano': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 2024'}),
+            'crlv_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf'}),
+            'dedetizacao_validade': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'dedetizacao_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf'}),
+            'limpeza_validade': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'limpeza_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf'}),
+        }
+
+class EditarDedetizacaoForm(forms.ModelForm):
+    class Meta:
+        model = DocumentacaoAgregado
+        fields = ['dedetizacao_validade', 'dedetizacao_pdf']
+        widgets = {
+            'dedetizacao_validade': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'required': 'true'}),
+            'dedetizacao_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf', 'required': 'true'}),
+        }
+
+class EditarLimpezaForm(forms.ModelForm):
+    class Meta:
+        model = DocumentacaoAgregado
+        fields = ['limpeza_validade', 'limpeza_pdf']
+        widgets = {
+            'limpeza_validade': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'required': 'true'}),
+            'limpeza_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf'}),
+        }
+
+class NovoCRLVForm(forms.ModelForm):
+    class Meta:
+        model = DocumentacaoAgregado
+        fields = ['crlv_ano', 'crlv_pdf']
+        widgets = {
+            'crlv_ano': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 2024', 'required': 'true'}),
+            'crlv_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf', 'required': 'true'}),
+        }
+
+class EditarCondutorForm(forms.ModelForm):
+    class Meta:
+        model = DocumentacaoAgregado
+        fields = ['condutor']
+        widgets = {
+            'condutor': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
+        }
+
