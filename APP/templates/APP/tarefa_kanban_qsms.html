@@ -214,10 +214,22 @@
 <script>
 // Permissão do Django passada para JavaScript
 const canAddTarefa = {% if perms.APP.add_qsmstarefa %}true{% else %}false{% endif %};
+const canChangeTarefa = {% if perms.APP.change_qsmstarefa %}true{% else %}false{% endif %};
 
 $(document).ready(function() {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    // Inicialização segura dos tooltips para evitar que erros de renderização (ex: descrição nula/vazia) travem o JS da página
+    try {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
+            const title = tooltipTriggerEl.getAttribute('data-bs-title') || tooltipTriggerEl.getAttribute('title');
+            if (title && title.trim() !== '') {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            }
+            return null;
+        }).filter(Boolean);
+    } catch (error) {
+        console.error('Erro ao inicializar tooltips:', error);
+    }
 
     const editorId = 'id_descricao'; // ID padrão do campo 'descricao'
 
@@ -230,6 +242,13 @@ $(document).ready(function() {
     $('#tarefaModal').on('hidden.bs.modal', function () {
         if (CKEDITOR.instances[editorId]) {
             CKEDITOR.instances[editorId].destroy(true);
+        }
+    });
+
+    // Sincronizar o CKEditor ao submeter o formulário de criação
+    $('#tarefaForm').on('submit', function() {
+        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[editorId]) {
+            CKEDITOR.instances[editorId].updateElement();
         }
     });
 
@@ -290,7 +309,7 @@ $(document).ready(function() {
                     modalHistorico.appendChild(li);
                 }
 
-                if (data.status === 'Pendente' && canAddTarefa) {
+                if (data.status === 'Pendente' && canChangeTarefa) {
                     const formHtml = `
                         <form action="${urlIniciarBase.replace(placeholder, data.id)}" method="post" class="ms-auto">
                             {% csrf_token %}
@@ -299,7 +318,7 @@ $(document).ready(function() {
                     `;
                     modalFooter.insertAdjacentHTML('afterbegin', formHtml);
                 } 
-                else if (data.status === 'Iniciada' && canAddTarefa) {
+                else if (data.status === 'Iniciada' && canChangeTarefa) {
                     acaoForm.action = urlAcaoBase.replace(placeholder, data.id);
                     modalFormAcao.style.display = 'block';
                     const formHtml = `

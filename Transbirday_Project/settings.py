@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-m#d(g@i*^8y&p9v%#j_q@z_i$o3y_u%@=)b+0z@h1x7k(n^u_m'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['transbirday.pythonanywhere.com', 'www.transbirday.pythonanywhere.com']
 
 # Application definition
 INSTALLED_APPS = [
@@ -78,7 +78,7 @@ USE_TZ = True
 # --- Configurações de Arquivos Estáticos e Mídia ---
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [ BASE_DIR / 'static', ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

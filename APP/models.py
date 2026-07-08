@@ -1,4 +1,4 @@
-﻿ï»¿from django.db import models
+from django.db import models
 from django.contrib.auth.models import User
 # ===================================================================
 #                       INÃÂCIO DAS ADIÃâ¡Ãâ¢ES
@@ -21,7 +21,7 @@ class PGR(models.Model):
         PROPRIO = 'PrÃÂ³prio', 'PrÃÂ³prio'
         DDR = 'DDR', 'DDR'
     titulo_cliente = models.CharField(max_length=255, verbose_name="TÃÂ­tulo do PGR (Cliente)")
-    validade = models.DateField(verbose_name="Validade do PGR")
+    validade = models.DateField(verbose_name="Validade")
     gerente_conta = models.CharField(max_length=100, blank=True, null=True, verbose_name="Gerente de Conta")
     contato_gc = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefone de Contato do GC")
     email_gc = models.EmailField(blank=True, null=True, verbose_name="E-mail do GC")
@@ -53,7 +53,7 @@ class GerenciadoraRisco(models.Model):
         SESSENTA = 60, '60 dias'
         NOVENTA = 90, '90 dias'
     nome = models.CharField(max_length=100, unique=True, verbose_name="Nome da GR")
-    validade_checklist = models.IntegerField(choices=Validade.choices, verbose_name="Validade do Checklist")
+    validade_checklist = models.IntegerField(choices=Validade.choices, verbose_name="Validade")
 
     def __str__(self):
         return self.nome
@@ -65,8 +65,8 @@ class Checklist(models.Model):
     veiculo = models.ForeignKey(Veiculo, on_delete=models.CASCADE)
     gerenciadora = models.ForeignKey(GerenciadoraRisco, on_delete=models.CASCADE, verbose_name="GR")
     aprovado = models.CharField(max_length=5, choices=Aprovado.choices)
-    data_aprovacao = models.DateField(blank=True, null=True, verbose_name="Data de AprovaÃÂ§ÃÂ£o/RealizaÃÂ§ÃÂ£o")
-    data_fim_validade = models.DateField(blank=True, null=True, verbose_name="Data de Fim da Validade Manual")
+    data_aprovacao = models.DateField(blank=True, null=True, verbose_name="Data de Aprovacao/Realizacao")
+    data_fim_validade = models.DateField(blank=True, null=True, verbose_name="Validade")
     motivo_reprovacao = models.TextField(blank=True, null=True)
     ultimo_usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="checklists_alterados")
     class Meta:
@@ -184,8 +184,8 @@ class Seguro(models.Model):
     corretor = models.CharField(max_length=100)
     contato_corretor = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefone de Contato")
     email_corretor = models.EmailField(blank=True, null=True, verbose_name="E-mail do Corretor")
-    vigencia = models.DateField(verbose_name="VigÃÂªncia do Seguro")
-    descricao_resumo = models.TextField(blank=True, null=True, verbose_name="DescriÃÂ§ÃÂ£o/Resumo")
+    vigencia = models.DateField(verbose_name="Vigencia")
+    descricao_resumo = models.TextField(blank=True, null=True, verbose_name="Descricao")
     apolice_pdf = models.FileField(upload_to='seguros/apolices/', verbose_name="Upload da ApÃÂ³lice (PDF)")
     certificado_pdf = models.FileField(upload_to='seguros/certificados/', verbose_name="Upload do Certificado (PDF)")
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="seguros_cadastrados")
@@ -212,7 +212,7 @@ class VeiculoAssegurado(models.Model):
         TOTAL = 'Total', 'Total'
         TERCEIROS = 'Apenas Terceiros', 'Apenas Terceiros'
     seguradora = models.CharField(max_length=100)
-    vigencia = models.DateField(verbose_name="VigÃÂªncia")
+    vigencia = models.DateField(verbose_name="Vigencia")
     placa = models.CharField(max_length=10)
     marca = models.CharField(max_length=50)
     modelo = models.CharField(max_length=50)
@@ -243,7 +243,7 @@ class CertificadoQSMS(models.Model):
     link_orgao = models.URLField(max_length=255, blank=True, null=True, verbose_name="Link do ÃârgÃÂ£o") 
     validade = models.DateField(verbose_name="Validade") 
     arquivo_pdf = models.FileField(upload_to='qsms/certificados_pdf/', verbose_name="Upload de Certificado PDF") 
-    descricao = models.TextField(blank=True, null=True, verbose_name="DescriÃÂ§ÃÂ£o") 
+    descricao = models.TextField(blank=True, null=True, verbose_name="Descricao") 
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="certificados_qsms_cadastrados")
 
     class Meta:
@@ -313,7 +313,7 @@ class QsmsHistoricoTarefa(models.Model):
 # ===================================================================
 class ArquivoDiverso(models.Model):
     titulo = models.CharField(max_length=255, verbose_name="TÃÂ­tulo")
-    descricao = models.TextField(blank=True, null=True, verbose_name="DescriÃÂ§ÃÂ£o do Documento")
+    descricao = models.TextField(blank=True, null=True, verbose_name="Descricao")
     arquivo_pdf = models.FileField(upload_to='arquivos_diversos/', verbose_name="Upload de Arquivo PDF")
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="arquivos_diversos_cadastrados")
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -335,7 +335,7 @@ class CertificadoFarmaco(models.Model):
     link_orgao = models.URLField(max_length=255, blank=True, null=True, verbose_name="Link do ÃârgÃÂ£o") 
     validade = models.DateField(verbose_name="Validade") 
     arquivo_pdf = models.FileField(upload_to='farmaco/certificados_pdf/', verbose_name="Upload de Certificado PDF") 
-    descricao = models.TextField(blank=True, null=True, verbose_name="DescriÃÂ§ÃÂ£o") 
+    descricao = models.TextField(blank=True, null=True, verbose_name="Descricao") 
     responsavel_cadastro = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="certificados_farmaco_cadastrados")
 
     class Meta:

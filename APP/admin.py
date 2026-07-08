@@ -24,7 +24,17 @@ from .models import (
     AgendaQSMS,
     QsmsTarefa,
     QsmsHistoricoTarefa,
-    ArquivoDiverso
+    ArquivoDiverso,
+    # ===================================================================
+    #                    MODELOS DO FÁRMACO
+    # ===================================================================
+    CertificadoFarmaco,
+    AgendaFarmaco,
+    FarmacoTarefa,
+    FarmacoHistoricoTarefa,
+    # ===================================================================
+    #                         FIM FÁRMACO
+    # ===================================================================
 )
 
 # Customização do Admin para Tarefas
@@ -52,6 +62,36 @@ class CondutorBlacklistAdmin(admin.ModelAdmin):
     list_filter = ('data_pesquisa', 'responsavel_cadastro')
 # ===================================================================
 #                         FIM DAS ADIÇÕES
+# ===================================================================
+
+# ===================================================================
+#           ADMIN CUSTOMIZADO PARA FÁRMACO
+# ===================================================================
+class CertificadoFarmacoAdmin(admin.ModelAdmin):
+    list_display = ('certificado', 'orgao_competente', 'validade', 'responsavel_cadastro')
+    search_fields = ('certificado', 'orgao_competente')
+    list_filter = ('validade', 'responsavel_cadastro')
+    ordering = ('validade',)
+
+class AgendaFarmacoAdmin(admin.ModelAdmin):
+    list_display = ('assunto', 'tipo', 'data_evento', 'hora_evento', 'responsavel_cadastro')
+    search_fields = ('assunto', 'detalhes')
+    list_filter = ('tipo', 'data_evento', 'responsavel_cadastro')
+    ordering = ('data_evento', 'hora_evento')
+
+class FarmacoTarefaAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'status', 'autor', 'criado_em')
+    list_filter = ('status', 'autor')
+    search_fields = ('titulo', 'descricao')
+    ordering = ('-criado_em',)
+
+class FarmacoHistoricoTarefaAdmin(admin.ModelAdmin):
+    list_display = ('tarefa', 'usuario', 'timestamp')
+    list_filter = ('usuario', 'timestamp')
+    search_fields = ('tarefa__titulo', 'acao')
+    ordering = ('timestamp',)
+# ===================================================================
+#                         FIM ADMIN FÁRMACO
 # ===================================================================
 
 # Registrando os modelos
@@ -86,3 +126,14 @@ admin.site.register(QsmsHistoricoTarefa)
 
 # REGISTO DE ARQUIVOS DIVERSOS
 admin.site.register(ArquivoDiverso)
+
+# ===================================================================
+#           REGISTO DOS MODELOS DO FÁRMACO
+# ===================================================================
+admin.site.register(CertificadoFarmaco, CertificadoFarmacoAdmin)
+admin.site.register(AgendaFarmaco, AgendaFarmacoAdmin)
+admin.site.register(FarmacoTarefa, FarmacoTarefaAdmin)
+admin.site.register(FarmacoHistoricoTarefa, FarmacoHistoricoTarefaAdmin)
+# ===================================================================
+#                         FIM REGISTO FÁRMACO
+# ===================================================================

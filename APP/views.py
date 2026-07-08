@@ -1,4 +1,4 @@
-﻿ï»¿from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import formset_factory
 from django.db import transaction
 from datetime import date, timedelta
