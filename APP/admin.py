@@ -35,6 +35,8 @@ from .models import (
     # ===================================================================
     #                         FIM FÁRMACO
     # ===================================================================
+    DocumentacaoAgregado,
+    AgregadoHistorico,
 )
 
 # Customização do Admin para Tarefas
@@ -137,3 +139,17 @@ admin.site.register(FarmacoHistoricoTarefa, FarmacoHistoricoTarefaAdmin)
 # ===================================================================
 #                         FIM REGISTO FÁRMACO
 # ===================================================================
+
+# REGISTRO DE AGREGADOS
+class DocumentacaoAgregadoAdmin(admin.ModelAdmin):
+    list_display = ('placa', 'condutor', 'crlv_ano', 'criado_em', 'responsavel_cadastro')
+    search_fields = ('placa', 'condutor')
+    list_filter = ('criado_em', 'responsavel_cadastro')
+
+class AgregadoHistoricoAdmin(admin.ModelAdmin):
+    list_display = ('agregado', 'usuario', 'acao', 'timestamp')
+    search_fields = ('agregado__placa', 'acao')
+    list_filter = ('usuario', 'timestamp')
+
+admin.site.register(DocumentacaoAgregado, DocumentacaoAgregadoAdmin)
+admin.site.register(AgregadoHistorico, AgregadoHistoricoAdmin)
