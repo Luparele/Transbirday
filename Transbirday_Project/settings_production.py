@@ -1,4 +1,4 @@
-﻿"""
+"""
 ConfiguraÃ§Ãµes de produÃ§Ã£o para PythonAnywhere
 """
 from .settings import *
@@ -6,6 +6,7 @@ from .settings import *
 # SeguranÃ§a
 DEBUG = False
 ALLOWED_HOSTS = ['transbirday.pythonanywhere.com', 'www.transbirday.pythonanywhere.com']
+CSRF_TRUSTED_ORIGINS = ['https://transbirday.pythonanywhere.com', 'https://www.transbirday.pythonanywhere.com']
 
 # ConfiguraÃ§Ã£o de arquivos estÃ¡ticos para PythonAnywhere
 STATIC_URL = '/static/'

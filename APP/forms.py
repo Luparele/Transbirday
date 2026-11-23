@@ -28,7 +28,7 @@ class PGRForm(forms.ModelForm):
             'contato_gc', 'email_gc', 'tipo_seguro', 'arquivo_pdf',
         ]
         widgets = {
-            'validade': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'validade': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'titulo_cliente': forms.TextInput(attrs={'class': 'form-control'}),
             'gerente_conta': forms.TextInput(attrs={'class': 'form-control'}),
             'contato_gc': forms.TextInput(attrs={'class': 'form-control'}),
@@ -78,7 +78,7 @@ class CondutorBlacklistForm(forms.ModelForm):
                 'class': 'form-control', 
                 'data-mask': '000.000.000-00' # Máscara para o JavaScript
             }),
-            'data_pesquisa': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'data_pesquisa': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'motivo_reprovacao': CKEditorUploadingWidget(),
         }
 # ===================================================================
@@ -96,8 +96,8 @@ class ChecklistForm(forms.ModelForm):
             'veiculo': forms.Select(attrs={'class': 'form-select'}),
             'gerenciadora': forms.Select(attrs={'class': 'form-select'}),
             'aprovado': forms.Select(attrs={'class': 'form-select'}),
-            'data_aprovacao': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'data_fim_validade': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'data_aprovacao': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
+            'data_fim_validade': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'motivo_reprovacao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
@@ -167,7 +167,7 @@ class SeguroForm(forms.ModelForm):
             'corretor': forms.TextInput(attrs={'class': 'form-control'}),
             'contato_corretor': forms.TextInput(attrs={'class': 'form-control'}),
             'email_corretor': forms.EmailInput(attrs={'class': 'form-control'}),
-            'vigencia': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'vigencia': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'descricao_resumo': CKEditorUploadingWidget(), 
             'apolice_pdf': forms.FileInput(attrs={'class': 'form-control'}),
             'certificado_pdf': forms.FileInput(attrs={'class': 'form-control'}),
@@ -178,7 +178,7 @@ class SinistroForm(forms.ModelForm):
         model = Sinistro
         fields = ['data_sinistro', 'hora_sinistro', 'seguradora_responsavel', 'status', 'detalhes']
         widgets = {
-            'data_sinistro': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'data_sinistro': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'hora_sinistro': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'seguradora_responsavel': forms.TextInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-select'}),
@@ -191,7 +191,7 @@ class VeiculoAsseguradoForm(forms.ModelForm):
         exclude = ['responsavel_cadastro']
         widgets = {
             'seguradora': forms.TextInput(attrs={'class': 'form-control'}),
-            'vigencia': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'vigencia': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'placa': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;'}),
             'marca': forms.TextInput(attrs={'class': 'form-control'}),
             'modelo': forms.TextInput(attrs={'class': 'form-control'}),
@@ -221,7 +221,7 @@ class CertificadoQSMSForm(forms.ModelForm):
             'certificado': forms.TextInput(attrs={'class': 'form-control'}),
             'orgao_competente': forms.TextInput(attrs={'class': 'form-control'}),
             'link_orgao': forms.URLInput(attrs={'class': 'form-control'}),
-            'validade': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'validade': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'arquivo_pdf': forms.FileInput(attrs={'class': 'form-control'}),
             'descricao': CKEditorUploadingWidget(),
         }
@@ -233,7 +233,7 @@ class AgendaQSMSForm(forms.ModelForm):
         widgets = {
             'tipo': forms.Select(attrs={'class': 'form-select'}), 
             'assunto': forms.TextInput(attrs={'class': 'form-control'}),
-            'data_evento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'data_evento': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'hora_evento': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'detalhes': CKEditorUploadingWidget(),
         }
@@ -325,7 +325,7 @@ class CertificadoFarmacoForm(forms.ModelForm):
             'certificado': forms.TextInput(attrs={'class': 'form-control'}),
             'orgao_competente': forms.TextInput(attrs={'class': 'form-control'}),
             'link_orgao': forms.URLInput(attrs={'class': 'form-control'}),
-            'validade': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'validade': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'arquivo_pdf': forms.FileInput(attrs={'class': 'form-control'}),
             'descricao': CKEditorUploadingWidget(),
         }
@@ -337,7 +337,7 @@ class AgendaFarmacoForm(forms.ModelForm):
         widgets = {
             'tipo': forms.Select(attrs={'class': 'form-select'}), 
             'assunto': forms.TextInput(attrs={'class': 'form-control'}),
-            'data_evento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'data_evento': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'hora_evento': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'detalhes': CKEditorUploadingWidget(),
         }
@@ -539,11 +539,10 @@ class UserPermissionsForm(forms.ModelForm):
             # Adicionar novas permissões
             for field_name in self.fields:
                 if field_name not in non_perm_fields and self.cleaned_data.get(field_name):
-                    try:
-                        permission = Permission.objects.get(codename=field_name)
+                    perms = Permission.objects.filter(codename=field_name, content_type__app_label='APP')
+                    permission = perms.filter(content_type__model='modulepermissions').first() or perms.first()
+                    if permission:
                         user.user_permissions.add(permission)
-                    except Permission.DoesNotExist:
-                        pass
         
         return user
 
@@ -559,9 +558,9 @@ class DocumentacaoAgregadoForm(forms.ModelForm):
             'condutor': forms.TextInput(attrs={'class': 'form-control'}),
             'crlv_ano': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 2024'}),
             'crlv_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf'}),
-            'dedetizacao_validade': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'dedetizacao_validade': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date'}),
             'dedetizacao_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf'}),
-            'limpeza_validade': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'limpeza_validade': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date'}),
             'limpeza_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf'}),
         }
 
@@ -570,7 +569,7 @@ class EditarDedetizacaoForm(forms.ModelForm):
         model = DocumentacaoAgregado
         fields = ['dedetizacao_validade', 'dedetizacao_pdf']
         widgets = {
-            'dedetizacao_validade': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'required': 'true'}),
+            'dedetizacao_validade': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date', 'required': 'true'}),
             'dedetizacao_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf', 'required': 'true'}),
         }
 
@@ -579,7 +578,7 @@ class EditarLimpezaForm(forms.ModelForm):
         model = DocumentacaoAgregado
         fields = ['limpeza_validade', 'limpeza_pdf']
         widgets = {
-            'limpeza_validade': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'required': 'true'}),
+            'limpeza_validade': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date', 'required': 'true'}),
             'limpeza_pdf': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'application/pdf'}),
         }
 

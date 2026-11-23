@@ -11,6 +11,14 @@ from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.contrib import messages
 from django.urls import reverse_lazy
+
+
+def _flash_form_errors(request, form, action="salvar"):
+    """Exibe erros de validação de formulário via Django messages."""
+    for field, errors in form.errors.items():
+        label = form.fields[field].label if field in form.fields and form.fields[field].label else field
+        for error in errors:
+            messages.error(request, f"Erro ao {action} ({label}): {error}")
 from django.db.models import Q # Importa o Q para buscas complexas (OU)
 from django.contrib.auth.models import User
 
@@ -104,7 +112,12 @@ def pgr_update_view(request, pk):
                     if regra_data.get('titulo'):
                         regra = RegraEmbarque.objects.create(titulo=regra_data['titulo'], descricao=regra_data.get('descricao', ''))
                         pgr_editado.regras_embarque.add(regra)
+            messages.success(request, 'PGR atualizado com sucesso!')
             return redirect('pgr_list')
+        _flash_form_errors(request, pgr_form, 'atualizar PGR')
+        for f in regra_formset:
+            if f.errors:
+                _flash_form_errors(request, f, 'atualizar regra de embarque')
     return redirect('pgr_list')
 
 @login_required
@@ -177,7 +190,11 @@ def gerenciadora_update_view(request, pk):
     gerenciadora = get_object_or_404(GerenciadoraRisco, pk=pk)
     if request.method == 'POST':
         form = GerenciadoraRiscoForm(request.POST, instance=gerenciadora)
-        if form.is_valid(): form.save()
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Gerenciadora atualizada com sucesso!')
+        else:
+            _flash_form_errors(request, form, 'atualizar gerenciadora')
     return redirect('checklist_view')
 
 @login_required
@@ -201,7 +218,11 @@ def veiculo_update_view(request, pk):
     veiculo = get_object_or_404(Veiculo, pk=pk)
     if request.method == 'POST':
         form = VeiculoForm(request.POST, instance=veiculo)
-        if form.is_valid(): form.save()
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Veículo atualizado com sucesso!')
+        else:
+            _flash_form_errors(request, form, 'atualizar veículo')
     return redirect('checklist_view')
 
 @login_required
@@ -252,6 +273,9 @@ def rotograma_update_view(request, pk):
         form = RotogramaForm(request.POST, request.FILES, instance=rotograma)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Rotograma atualizado com sucesso!')
+        else:
+            _flash_form_errors(request, form, 'atualizar rotograma')
     return redirect('rotograma_list')
 
 @login_required
@@ -498,6 +522,9 @@ def seguro_update_view(request, pk):
     form = SeguroForm(request.POST, request.FILES, instance=seguro)
     if form.is_valid():
         form.save()
+        messages.success(request, 'Seguro atualizado com sucesso!')
+    else:
+        _flash_form_errors(request, form, 'atualizar seguro')
     return redirect('seguro_list')
 
 @login_required
@@ -654,7 +681,9 @@ def certificado_qsms_list_view(request):
             if request.user.is_authenticated:
                 certificado.responsavel_cadastro = request.user
             certificado.save()
+            messages.success(request, 'Certificado QSMS adicionado com sucesso!')
             return redirect('certificado_qsms_list')
+        _flash_form_errors(request, form, 'adicionar certificado QSMS')
     
     certificados = CertificadoQSMS.objects.all().order_by('validade')
     today = date.today()
@@ -681,6 +710,9 @@ def certificado_qsms_update_view(request, pk):
     form = CertificadoQSMSForm(request.POST, request.FILES, instance=certificado)
     if form.is_valid():
         form.save()
+        messages.success(request, 'Certificado QSMS atualizado com sucesso!')
+    else:
+        _flash_form_errors(request, form, 'atualizar certificado QSMS')
     return redirect('certificado_qsms_list')
 
 @login_required
@@ -1083,7 +1115,9 @@ def certificado_farmaco_list_view(request):
             if request.user.is_authenticated:
                 certificado.responsavel_cadastro = request.user
             certificado.save()
+            messages.success(request, 'Certificado Fármaco adicionado com sucesso!')
             return redirect('certificado_farmaco_list')
+        _flash_form_errors(request, form, 'adicionar certificado Fármaco')
     
     certificados = CertificadoFarmaco.objects.all().order_by('validade')
     today = date.today()
@@ -1110,6 +1144,9 @@ def certificado_farmaco_update_view(request, pk):
     form = CertificadoFarmacoForm(request.POST, request.FILES, instance=certificado)
     if form.is_valid():
         form.save()
+        messages.success(request, 'Certificado Fármaco atualizado com sucesso!')
+    else:
+        _flash_form_errors(request, form, 'atualizar certificado Fármaco')
     return redirect('certificado_farmaco_list')
 
 @login_required
